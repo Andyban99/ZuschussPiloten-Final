@@ -572,3 +572,16 @@ body {
         padding-bottom: 4rem;
     }
 }
+
+@media (max-width: 640px) {
+    .btn-hero,
+    .btn-secondary {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.8125rem;
+    }
+
+    .hero-badge {
+        font-size: 0.6875rem;
+        padding: 0.1875rem 0.625rem;
+    }
+}

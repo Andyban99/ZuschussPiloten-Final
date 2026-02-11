@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Digitalisierungsförderung für KMU - Zuschüsse für Software, Automatisierung, IT-Sicherheit und digitale Prozesse. Bis zu 50% Förderung möglich.">
+    <meta name="keywords" content="Digitalisierung, IT-Förderung, Software, Automatisierung, KMU, Fördermittel, Digital">
+
+    <title>Digitalisierung & IT-Förderung | Zuschuss Piloten</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Icons -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- ========================================
+         NAVIGATION
+         ======================================== -->
+    <nav class="fixed top-0 w-full z-50 glass-panel border-b border-slate-200/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="/" class="flex items-center gap-2 sm:gap-3 cursor-pointer">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 bg-[#0B1120] rounded-lg flex items-center justify-center text-white shadow-lg shadow-blue-900/20">
+                    <iconify-icon icon="solar:plain-3-bold-duotone" width="22"></iconify-icon>
+                </div>
+                <div class="leading-tight">
+                    <span class="block text-slate-900 font-bold tracking-tight text-base sm:text-lg">Zuschuss Piloten</span>
+                    <span class="hidden sm:block text-[10px] uppercase tracking-widest text-slate-500 font-medium">Fördermittel-Advisory</span>
+                </div>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+                <!-- Leistungen Dropdown -->
+                <div class="relative group">
+                    <button class="nav-link text-indigo-700 flex items-center gap-1 py-2">
+                        Leistungen
+                        <iconify-icon icon="solar:alt-arrow-down-linear" width="16" class="transition-transform group-hover:rotate-180"></iconify-icon>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div class="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        <div class="w-64 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden">
+                            <a href="investitionsfoerderung.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors">
+                                <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                                    <iconify-icon icon="solar:buildings-2-bold-duotone" width="20"></iconify-icon>
+                                </div>
+                                <div>
+                                    <div class="text-slate-900 font-medium">Investitionsförderung</div>
+                                    <div class="text-xs text-slate-400">Maschinen, Anlagen, Gebäude</div>
+                                </div>
+                            </a>
+                            <a href="digitalisierung.html" class="flex items-center gap-3 px-4 py-3 bg-indigo-50 transition-colors border-t border-slate-100">
+                                <div class="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                                    <iconify-icon icon="solar:monitor-smartphone-bold-duotone" width="20"></iconify-icon>
+                                </div>
+                                <div>
+                                    <div class="text-indigo-700 font-medium">Digitalisierung/IT</div>
+                                    <div class="text-xs text-indigo-500">Software, Cloud, Prozesse</div>
+                                </div>
+                            </a>
+                            <a href="personalfoerderung.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors border-t border-slate-100">
+                                <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                    <iconify-icon icon="solar:users-group-rounded-bold-duotone" width="20"></iconify-icon>
+                                </div>
+                                <div>
+                                    <div class="text-slate-900 font-medium">Personalförderung</div>
+                                    <div class="text-xs text-slate-400">Lohnzuschüsse, Weiterbildung</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <a href="index.html#kompetenzen" class="nav-link hover:text-indigo-700 transition-colors">Förderübersicht</a>
+                <a href="index.html#ueber-uns" class="nav-link hover:text-indigo-700 transition-colors">Über uns</a>
+                <a href="index.html#warum-wir" class="nav-link hover:text-indigo-700 transition-colors">Was uns ausmacht</a>
+            </div>
+
+            <!-- CTA -->
+            <div class="flex items-center gap-2 sm:gap-4">
+                <span class="hidden md:block text-sm font-medium text-slate-600 cursor-pointer">Kunden Login</span>
+                <a href="index.html#kontakt" class="group px-3 sm:px-5 py-2 sm:py-2.5 bg-[#0F172A] hover:bg-indigo-800 text-white text-xs sm:text-sm font-medium rounded-lg transition-all shadow-lg shadow-indigo-900/10 flex items-center gap-2">
+                    <span class="hidden sm:inline">Kostenloser Zuschusscheck</span>
+                    <span class="sm:hidden">Kontakt</span>
+                    <iconify-icon icon="solar:arrow-right-linear" class="group-hover:translate-x-0.5 transition-transform"></iconify-icon>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========================================
+         HERO SECTION
+         ======================================== -->
+    <section class="relative pt-28 pb-16 sm:pt-32 sm:pb-20 md:pt-44 md:pb-28 overflow-hidden bg-[#0B1120]">
+        <!-- Background Effects -->
+        <div class="absolute inset-0 bg-grid opacity-20 pointer-events-none"></div>
+        <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-600/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 opacity-40"></div>
+        <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4"></div>
+
+        <!-- Floating Code Elements -->
+        <div class="absolute top-32 right-10 hidden lg:block opacity-20">
+            <div class="font-mono text-xs text-indigo-300 space-y-1">
+                <div>&lt;digital-transform&gt;</div>
+                <div class="ml-4">automation: true</div>
+                <div class="ml-4">efficiency: +40%</div>
+                <div>&lt;/digital-transform&gt;</div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+            <div class="max-w-3xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-semibold mb-6 sm:mb-8">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-400"></span>
+                    </span>
+                    Digitalisierungsförderung
+                </div>
+
+                <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[68px] font-bold text-white tracking-tight leading-[1.05] mb-6">
+                    Digitalisieren Sie smart – <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-300">mit staatlicher Unterstützung.</span>
+                </h1>
+
+                <p class="text-base sm:text-lg text-slate-400 leading-relaxed font-light mb-8 sm:mb-10 max-w-2xl border-l-2 border-indigo-500/30 pl-4 sm:pl-6">
+                    Von der Prozessautomatisierung bis zur IT-Sicherheit: Bund und Länder fördern digitale Transformation. Wir finden das passende Programm für Ihr Vorhaben.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    <a href="index.html#kontakt" class="px-6 sm:px-8 py-3 sm:py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/25 transition-all flex items-center justify-center gap-2">
+                        <span>Förderfähigkeit prüfen</span>
+                        <iconify-icon icon="solar:arrow-right-linear" width="18"></iconify-icon>
+                    </a>
+                    <a href="#foerderbar" class="px-6 sm:px-8 py-3 sm:py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2">
+                        <iconify-icon icon="solar:code-square-linear" width="18"></iconify-icon>
+                        <span>Was wird gefördert?</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         BUNDESLAND-HINWEIS BANNER
+         ======================================== -->
+    <section class="py-6 bg-gradient-to-r from-amber-500 to-orange-500 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"20\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cpath d=\"M0 0h20v20H0z\" fill=\"none\"/%3E%3Cpath d=\"M10 0v20M0 10h20\" stroke=\"%23ffffff\" stroke-opacity=\"0.1\"/%3E%3C/svg%3E')]"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 text-center sm:text-left">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <iconify-icon icon="solar:map-bold" class="text-white" width="22"></iconify-icon>
+                    </div>
+                    <div>
+                        <p class="text-white font-bold text-sm sm:text-base">Förderung ist Ländersache</p>
+                        <p class="text-amber-100 text-xs sm:text-sm">Jedes Bundesland hat eigene Programme, Regeln & Förderquoten</p>
+                    </div>
+                </div>
+                <div class="hidden sm:block w-px h-10 bg-white/30"></div>
+                <p class="text-white/90 text-sm max-w-md">
+                    Wir prüfen individuell, welche Programme für Ihren Standort und Ihr Vorhaben verfügbar sind.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         WAS WIRD GEFÖRDERT
+         ======================================== -->
+    <section id="foerderbar" class="py-16 sm:py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+                <div class="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold uppercase tracking-wider mb-4">Förderfähige Vorhaben</div>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-4">Was wird typischerweise gefördert?</h2>
+                <p class="text-slate-500 text-base sm:text-lg">Digitale Lösungen, die echte Probleme lösen und Prozesse verbessern, stehen im Fokus der Förderprogramme.</p>
+            </div>
+
+            <!-- Förderfähig Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+
+                <!-- Card 1: Prozessautomatisierung -->
+                <div class="group bg-gradient-to-br from-indigo-50 to-violet-50 rounded-2xl p-6 border border-indigo-100 hover:border-indigo-300 hover:shadow-xl transition-all relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-200/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-indigo-300/40 transition-all"></div>
+
+                    <div class="relative z-10">
+                        <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-indigo-600/30">
+                            <iconify-icon icon="solar:settings-minimalistic-bold-duotone" width="28"></iconify-icon>
+                        </div>
+
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Prozessautomatisierung</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Automatisierung von Arbeitsabläufen, Workflow-Management und digitale Steuerung von Produktionsprozessen.
+                        </p>
+
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-1 bg-white border border-indigo-200 rounded-lg text-xs font-medium text-indigo-700">ERP-Systeme</span>
+                            <span class="px-2.5 py-1 bg-white border border-indigo-200 rounded-lg text-xs font-medium text-indigo-700">Workflows</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Cloud & Plattformen -->
+                <div class="group bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl p-6 border border-violet-100 hover:border-violet-300 hover:shadow-xl transition-all relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-violet-200/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-violet-300/40 transition-all"></div>
+
+                    <div class="relative z-10">
+                        <div class="w-14 h-14 bg-violet-600 rounded-2xl flex items-center justify-center text-white mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-violet-600/30">
+                            <iconify-icon icon="solar:cloud-bold-duotone" width="28"></iconify-icon>
+                        </div>
+
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Cloud & Plattformen</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Einführung von Cloud-Lösungen, digitale Plattformen und Vernetzung von Systemen für effizientere Zusammenarbeit.
+                        </p>
+
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-1 bg-white border border-violet-200 rounded-lg text-xs font-medium text-violet-700">SaaS</span>
+                            <span class="px-2.5 py-1 bg-white border border-violet-200 rounded-lg text-xs font-medium text-violet-700">Integration</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: IT-Sicherheit -->
+                <div class="group bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-6 border border-emerald-100 hover:border-emerald-300 hover:shadow-xl transition-all relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-200/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-300/40 transition-all"></div>
+
+                    <div class="relative z-10">
+                        <div class="w-14 h-14 bg-emerald-600 rounded-2xl flex items-center justify-center text-white mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-emerald-600/30">
+                            <iconify-icon icon="solar:shield-check-bold-duotone" width="28"></iconify-icon>
+                        </div>
+
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">IT-Sicherheit</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Implementierung von Sicherheitskonzepten, Datenschutzmaßnahmen und sichere Cloud-Nutzung.
+                        </p>
+
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-1 bg-white border border-emerald-200 rounded-lg text-xs font-medium text-emerald-700">Cybersecurity</span>
+                            <span class="px-2.5 py-1 bg-white border border-emerald-200 rounded-lg text-xs font-medium text-emerald-700">DSGVO</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: E-Commerce -->
+                <div class="group bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-100 hover:border-blue-300 hover:shadow-xl transition-all relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-200/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-300/40 transition-all"></div>
+
+                    <div class="relative z-10">
+                        <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-blue-600/30">
+                            <iconify-icon icon="solar:cart-large-2-bold-duotone" width="28"></iconify-icon>
+                        </div>
+
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">E-Commerce & Vertrieb</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Online-Shops mit echtem Funktionsumfang, digitale Vertriebskanäle und Kundenportale mit Mehrwert.
+                        </p>
+
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-1 bg-white border border-blue-200 rounded-lg text-xs font-medium text-blue-700">Webshop</span>
+                            <span class="px-2.5 py-1 bg-white border border-blue-200 rounded-lg text-xs font-medium text-blue-700">B2B-Portal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: KI & Datenanalyse -->
+                <div class="group bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl p-6 border border-rose-100 hover:border-rose-300 hover:shadow-xl transition-all relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-rose-200/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-rose-300/40 transition-all"></div>
+
+                    <div class="relative z-10">
+                        <div class="w-14 h-14 bg-rose-600 rounded-2xl flex items-center justify-center text-white mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-rose-600/30">
+                            <iconify-icon icon="solar:cpu-bolt-bold-duotone" width="28"></iconify-icon>
+                        </div>
+
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">KI & Datenanalyse</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Einsatz von KI-Lösungen, Business Intelligence und datengetriebene Entscheidungsfindung.
+                        </p>
+
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-1 bg-white border border-rose-200 rounded-lg text-xs font-medium text-rose-700">Machine Learning</span>
+                            <span class="px-2.5 py-1 bg-white border border-rose-200 rounded-lg text-xs font-medium text-rose-700">BI</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Qualifizierung -->
+                <div class="group bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-100 hover:border-amber-300 hover:shadow-xl transition-all relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-amber-200/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-300/40 transition-all"></div>
+
+                    <div class="relative z-10">
+                        <div class="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center text-white mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-amber-500/30">
+                            <iconify-icon icon="solar:square-academic-cap-bold-duotone" width="28"></iconify-icon>
+                        </div>
+
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Digitale Qualifizierung</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Schulungen und Weiterbildungen für Mitarbeiter im Umgang mit neuen digitalen Technologien.
+                        </p>
+
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-1 bg-white border border-amber-200 rounded-lg text-xs font-medium text-amber-700">Schulungen</span>
+                            <span class="px-2.5 py-1 bg-white border border-amber-200 rounded-lg text-xs font-medium text-amber-700">Coaching</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kernprinzip Box -->
+            <div class="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl p-6 sm:p-8 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4"></div>
+
+                <div class="relative z-10 flex flex-col lg:flex-row items-center gap-6">
+                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center shrink-0">
+                        <iconify-icon icon="solar:lightbulb-bolt-bold" class="text-white" width="32"></iconify-icon>
+                    </div>
+                    <div class="text-center lg:text-left">
+                        <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Das Kernprinzip</h3>
+                        <p class="text-indigo-100 text-sm sm:text-base leading-relaxed max-w-3xl">
+                            <strong class="text-white">Förderfähig sind Lösungen, die echte Probleme lösen</strong> – Automatisierung, Effizienzsteigerung, technische Innovation.
+                            Der Fokus liegt auf dem Mehrwert für Ihr Unternehmen, nicht auf der reinen Außendarstellung.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         WAS WIRD NICHT GEFÖRDERT
+         ======================================== -->
+    <section class="py-16 sm:py-24 bg-slate-50 relative overflow-hidden">
+        <div class="absolute inset-0 bg-grid-light pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-start">
+
+                <!-- Left: Nicht förderfähig -->
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-slate-200 rounded-xl flex items-center justify-center text-slate-500">
+                            <iconify-icon icon="solar:close-circle-bold" width="24"></iconify-icon>
+                        </div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold text-slate-900">In der Regel nicht förderfähig</h2>
+                            <p class="text-slate-500 text-sm">Diese Vorhaben fallen meist durch das Raster</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-white rounded-xl p-5 border border-slate-200 flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center text-red-500 shrink-0 mt-0.5">
+                                <iconify-icon icon="solar:close-circle-bold" width="18"></iconify-icon>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-900 mb-1">Reine Unternehmenswebseiten</h4>
+                                <p class="text-sm text-slate-500">Webseiten zur reinen Produkt- und Unternehmensdarstellung ohne funktionale Komponenten oder Problemlösung.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-5 border border-slate-200 flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center text-red-500 shrink-0 mt-0.5">
+                                <iconify-icon icon="solar:close-circle-bold" width="18"></iconify-icon>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-900 mb-1">Standard-Marketing & Werbung</h4>
+                                <p class="text-sm text-slate-500">Klassisches Online-Marketing, SEO-Optimierung, Social Media Kampagnen und reine Werbemaßnahmen.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-5 border border-slate-200 flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center text-red-500 shrink-0 mt-0.5">
+                                <iconify-icon icon="solar:close-circle-bold" width="18"></iconify-icon>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-900 mb-1">Standard-Hardware & -Software</h4>
+                                <p class="text-sm text-slate-500">Gewöhnliche Büroausstattung, Standard-PCs, Office-Lizenzen oder Ersatzbeschaffungen ohne Innovation.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-5 border border-slate-200 flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center text-red-500 shrink-0 mt-0.5">
+                                <iconify-icon icon="solar:close-circle-bold" width="18"></iconify-icon>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-900 mb-1">Laufende Kosten & Eigenleistungen</h4>
+                                <p class="text-sm text-slate-500">Betriebskosten, Personalkosten, Eigenleistungen und monatliche Lizenzgebühren.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Entscheidungshilfe -->
+                <div>
+                    <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-lg">
+                        <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                            <iconify-icon icon="solar:question-circle-bold-duotone" class="text-indigo-600"></iconify-icon>
+                            Schnell-Check: Ist mein Vorhaben förderfähig?
+                        </h3>
+
+                        <div class="space-y-4">
+                            <!-- Check Item 1 -->
+                            <div class="flex items-start gap-4 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                                <iconify-icon icon="solar:check-circle-bold" class="text-emerald-500 shrink-0 mt-0.5" width="22"></iconify-icon>
+                                <div>
+                                    <p class="text-slate-700 font-medium">Löst es ein konkretes Problem im Betrieb?</p>
+                                    <p class="text-sm text-slate-500 mt-1">Effizienzsteigerung, Automatisierung, neue Geschäftsmodelle</p>
+                                </div>
+                            </div>
+
+                            <!-- Check Item 2 -->
+                            <div class="flex items-start gap-4 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                                <iconify-icon icon="solar:check-circle-bold" class="text-emerald-500 shrink-0 mt-0.5" width="22"></iconify-icon>
+                                <div>
+                                    <p class="text-slate-700 font-medium">Verbessert es Prozesse nachhaltig?</p>
+                                    <p class="text-sm text-slate-500 mt-1">Keine Einmallösung, sondern dauerhafte Verbesserung</p>
+                                </div>
+                            </div>
+
+                            <!-- Check Item 3 -->
+                            <div class="flex items-start gap-4 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                                <iconify-icon icon="solar:check-circle-bold" class="text-emerald-500 shrink-0 mt-0.5" width="22"></iconify-icon>
+                                <div>
+                                    <p class="text-slate-700 font-medium">Geht es über Standard hinaus?</p>
+                                    <p class="text-sm text-slate-500 mt-1">Mehr als nur Ersatzbeschaffung oder Pflichterfüllung</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Beispiel Box -->
+                        <div class="mt-6 p-4 rounded-xl bg-indigo-50 border border-indigo-200">
+                            <p class="text-sm text-slate-700">
+                                <strong class="text-indigo-700">Beispiel:</strong> Ein Online-Shop mit Warenwirtschaftsanbindung, Kundenkonto und automatisierten Prozessen ist förderfähig – eine einfache Visitenkarten-Website nicht.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         TYPISCHE FÖRDERKONDITIONEN
+         ======================================== -->
+    <section class="py-16 sm:py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+                <div class="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold uppercase tracking-wider mb-4">Orientierungswerte</div>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-4">Typische Förderkonditionen</h2>
+                <p class="text-slate-500 text-base sm:text-lg">Die genauen Konditionen variieren je nach Bundesland und Programm – diese Werte dienen zur Orientierung.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <!-- Förderquote -->
+                <div class="bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+
+                    <div class="relative z-10">
+                        <iconify-icon icon="solar:chart-2-bold-duotone" class="text-indigo-200 mb-4" width="32"></iconify-icon>
+                        <div class="text-4xl sm:text-5xl font-bold mb-2">30-50%</div>
+                        <div class="text-indigo-200 font-medium mb-4">Typische Förderquote</div>
+                        <p class="text-indigo-100 text-sm">Je nach Unternehmensgröße und Bundesland. KMU erhalten meist höhere Quoten.</p>
+                    </div>
+                </div>
+
+                <!-- Max. Fördersumme -->
+                <div class="bg-gradient-to-br from-slate-700 to-slate-800 rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+
+                    <div class="relative z-10">
+                        <iconify-icon icon="solar:wallet-money-bold-duotone" class="text-slate-400 mb-4" width="32"></iconify-icon>
+                        <div class="text-4xl sm:text-5xl font-bold mb-2">5-50k</div>
+                        <div class="text-slate-400 font-medium mb-4">Typische Fördersumme</div>
+                        <p class="text-slate-300 text-sm">Die maximale Fördersumme variiert stark. Manche Programme fördern auch höhere Beträge.</p>
+                    </div>
+                </div>
+
+                <!-- Bewilligungszeitraum -->
+                <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+
+                    <div class="relative z-10">
+                        <iconify-icon icon="solar:calendar-bold-duotone" class="text-emerald-200 mb-4" width="32"></iconify-icon>
+                        <div class="text-4xl sm:text-5xl font-bold mb-2">12 Mon.</div>
+                        <div class="text-emerald-200 font-medium mb-4">Umsetzungszeitraum</div>
+                        <p class="text-emerald-100 text-sm">Typischer Zeitraum für die Projektumsetzung nach Bewilligung.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hinweise -->
+            <div class="grid sm:grid-cols-2 gap-6">
+                <div class="bg-amber-50 rounded-xl p-5 border border-amber-200 flex items-start gap-4">
+                    <iconify-icon icon="solar:info-circle-bold" class="text-amber-500 shrink-0 mt-0.5" width="22"></iconify-icon>
+                    <div>
+                        <h4 class="font-semibold text-slate-900 mb-1">Antrag vor Projektstart</h4>
+                        <p class="text-sm text-slate-600">Der Förderantrag muss in der Regel vor Beginn des Vorhabens gestellt werden. Keine nachträgliche Förderung möglich.</p>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 rounded-xl p-5 border border-blue-200 flex items-start gap-4">
+                    <iconify-icon icon="solar:document-text-bold" class="text-blue-500 shrink-0 mt-0.5" width="22"></iconify-icon>
+                    <div>
+                        <h4 class="font-semibold text-slate-900 mb-1">Auszahlung nach Nachweis</h4>
+                        <p class="text-sm text-slate-600">Die Förderung wird nach erfolgreichem Projektabschluss und Vorlage des Verwendungsnachweises ausgezahlt.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         CTA SECTION
+         ======================================== -->
+    <section class="py-16 sm:py-24 bg-[#0B1120] relative overflow-hidden">
+        <div class="absolute inset-0 bg-grid opacity-10"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/20 rounded-full blur-[100px]"></div>
+
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+            <div class="w-20 h-20 bg-indigo-600/20 rounded-2xl flex items-center justify-center mx-auto mb-8 border border-indigo-500/30">
+                <iconify-icon icon="solar:map-point-search-bold-duotone" class="text-indigo-400" width="40"></iconify-icon>
+            </div>
+
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight mb-6">
+                Welches Programm passt zu Ihrem Vorhaben?
+            </h2>
+
+            <p class="text-slate-400 text-base sm:text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
+                Da jedes Bundesland eigene Förderprogramme mit unterschiedlichen Konditionen anbietet, prüfen wir individuell, welche Möglichkeiten für Ihren Standort und Ihr Digitalisierungsvorhaben bestehen.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+                <a href="index.html#kontakt" class="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-xl shadow-indigo-600/25 transition-all transform hover:-translate-y-1 flex items-center gap-3">
+                    <span>Kostenlose Erstberatung</span>
+                    <iconify-icon icon="solar:arrow-right-linear" width="22"></iconify-icon>
+                </a>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm">
+                <div class="flex items-center gap-2 text-slate-400">
+                    <iconify-icon icon="solar:verified-check-bold" class="text-indigo-400" width="18"></iconify-icon>
+                    <span>100% kostenlos</span>
+                </div>
+                <div class="flex items-center gap-2 text-slate-400">
+                    <iconify-icon icon="solar:verified-check-bold" class="text-indigo-400" width="18"></iconify-icon>
+                    <span>Unverbindlich</span>
+                </div>
+                <div class="flex items-center gap-2 text-slate-400">
+                    <iconify-icon icon="solar:verified-check-bold" class="text-indigo-400" width="18"></iconify-icon>
+                    <span>Antwort in 24h</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         FOOTER
+         ======================================== -->
+    <footer class="bg-[#0B1120] pt-20 pb-10 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+                <!-- Logo & Description -->
+                <div class="lg:col-span-2">
+                    <a href="/" class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-indigo-600/20">
+                            <iconify-icon icon="solar:plain-3-bold-duotone" width="22"></iconify-icon>
+                        </div>
+                        <div class="leading-tight">
+                            <span class="block text-white font-bold tracking-tight text-lg">Zuschuss Piloten</span>
+                            <span class="block text-[10px] uppercase tracking-widest text-slate-500 font-medium">Fördermittel-Advisory</span>
+                        </div>
+                    </a>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6 max-w-sm">
+                        Die führende Fördermittelberatung für den deutschen Mittelstand. Wir machen staatliche Zuschüsse planbar und einfach.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <a href="index.html#kontakt" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors">
+                            Kontakt aufnehmen
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Leistungen -->
+                <div>
+                    <h4 class="font-bold text-white mb-6">Leistungen</h4>
+                    <ul class="space-y-4 text-sm text-slate-400">
+                        <li>
+                            <a href="investitionsfoerderung.html" class="hover:text-indigo-400 transition-colors flex items-center gap-2">
+                                <iconify-icon icon="solar:buildings-2-bold" class="text-blue-500" width="16"></iconify-icon>
+                                Investitionsförderung
+                            </a>
+                        </li>
+                        <li>
+                            <a href="digitalisierung.html" class="text-indigo-400 font-medium flex items-center gap-2">
+                                <iconify-icon icon="solar:monitor-smartphone-bold" class="text-indigo-500" width="16"></iconify-icon>
+                                Digitalisierung/IT Förderung
+                            </a>
+                        </li>
+                        <li>
+                            <a href="personalfoerderung.html" class="hover:text-indigo-400 transition-colors flex items-center gap-2">
+                                <iconify-icon icon="solar:users-group-rounded-bold" class="text-emerald-500" width="16"></iconify-icon>
+                                Personalförderung
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Navigation -->
+                <div>
+                    <h4 class="font-bold text-white mb-6">Navigation</h4>
+                    <ul class="space-y-4 text-sm text-slate-400">
+                        <li><a href="index.html#kompetenzen" class="hover:text-indigo-400 transition-colors">Förderübersicht</a></li>
+                        <li><a href="index.html#ueber-uns" class="hover:text-indigo-400 transition-colors">Über uns</a></li>
+                        <li><a href="index.html#warum-wir" class="hover:text-indigo-400 transition-colors">Was uns ausmacht</a></li>
+                        <li><a href="index.html#kontakt" class="hover:text-indigo-400 transition-colors">Kontakt</a></li>
+                    </ul>
+                </div>
+
+                <!-- Rechtliches -->
+                <div>
+                    <h4 class="font-bold text-white mb-6">Rechtliches</h4>
+                    <ul class="space-y-4 text-sm text-slate-400">
+                        <li><a href="impressum.html" class="hover:text-indigo-400 transition-colors">Impressum</a></li>
+                        <li><a href="datenschutz.html" class="hover:text-indigo-400 transition-colors">Datenschutz</a></li>
+                        <li><a href="agb.html" class="hover:text-indigo-400 transition-colors">AGB</a></li>
+                    </ul>
+
+                    <div class="mt-8 pt-6 border-t border-slate-800">
+                        <h4 class="font-bold text-white mb-4 text-sm">Kontakt</h4>
+                        <ul class="space-y-3 text-sm text-slate-400">
+                            <li class="flex items-center gap-2">
+                                <iconify-icon icon="solar:phone-bold" class="text-slate-500"></iconify-icon>
+                                <a href="tel:+4917698970060" class="hover:text-white transition-colors">+49 (0) 176 989 700 60</a>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <iconify-icon icon="solar:letter-bold" class="text-slate-500"></iconify-icon>
+                                <a href="mailto:team@zuschusspiloten.de" class="hover:text-white transition-colors">team@zuschusspiloten.de</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+                <p>&copy; 2024 Zuschuss Piloten GmbH. Alle Rechte vorbehalten.</p>
+                <div class="flex items-center gap-6">
+                    <a href="impressum.html" class="hover:text-slate-300 transition-colors">Impressum</a>
+                    <a href="datenschutz.html" class="hover:text-slate-300 transition-colors">Datenschutz</a>
+                    <a href="agb.html" class="hover:text-slate-300 transition-colors">AGB</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+</body>
+</html>
