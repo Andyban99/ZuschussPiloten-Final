@@ -1,0 +1,5 @@
+# OS files
+.DS_Store
+
+# Original backup images (large files)
+*_original.*
