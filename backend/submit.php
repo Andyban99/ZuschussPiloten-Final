@@ -82,30 +82,44 @@ try {
     $_SESSION['last_submit'] = $now;
 
     // E-Mail-Benachrichtigung senden
-    if (NOTIFY_ENABLED && NOTIFY_EMAIL) {
+    if (NOTIFY_ENABLED && defined('NOTIFY_EMAILS') && !empty(NOTIFY_EMAILS)) {
         $subject = "Neue Anfrage von {$unternehmen} - #{$anfrageId}";
         $body = "
-Neue Kontaktanfrage erhalten:
+════════════════════════════════════════
+   NEUE KONTAKTANFRAGE - #{$anfrageId}
+════════════════════════════════════════
 
-Name: {$name}
-Unternehmen: {$unternehmen}
-E-Mail: {$email}
-Telefon: {$telefon}
+KONTAKTDATEN
+────────────────────────────────────────
+Name:           {$name}
+Unternehmen:    {$unternehmen}
+E-Mail:         {$email}
+Telefon:        " . ($telefon ?: 'Nicht angegeben') . "
 
-Nachricht:
-{$nachricht}
+NACHRICHT
+────────────────────────────────────────
+" . ($nachricht ?: 'Keine Nachricht angegeben') . "
 
----
-Zum Admin-Dashboard: " . (isset($_SERVER['HTTPS']) ? 'https' : 'http') . "://" . $_SERVER['HTTP_HOST'] . "/backend/admin/
-        ";
+────────────────────────────────────────
+Eingegangen am: " . date('d.m.Y \u\m H:i') . " Uhr
+
+→ Zum Admin-Dashboard:
+  https://zuschusspiloten.de/backend/admin/view.php?id={$anfrageId}
+
+════════════════════════════════════════
+";
 
         $headers = [
-            'From: noreply@zuschuss-piloten.de',
+            'From: ZuschussPiloten Webseite <webseite@zuschusspiloten.de>',
             'Reply-To: ' . $email,
-            'Content-Type: text/plain; charset=UTF-8'
+            'Content-Type: text/plain; charset=UTF-8',
+            'X-Mailer: ZuschussPiloten-Formular'
         ];
 
-        @mail(NOTIFY_EMAIL, $subject, $body, implode("\r\n", $headers));
+        // An alle konfigurierten E-Mail-Adressen senden
+        foreach (NOTIFY_EMAILS as $notifyEmail) {
+            @mail($notifyEmail, $subject, $body, implode("\r\n", $headers));
+        }
     }
 
     echo json_encode([

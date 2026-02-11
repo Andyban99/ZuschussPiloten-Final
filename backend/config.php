@@ -4,17 +4,17 @@
  */
 
 // Datenbank-Konfiguration
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'zuschuss_piloten');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_HOST', 'database-5019531275.webspace-host.com');
+define('DB_NAME', 'dbs15265930');
+define('DB_USER', 'dbu2285787');
+define('DB_PASS', 'Freunde999...');
 
-// Admin-Zugangsdaten (bitte ändern!)
+// Admin-Zugangsdaten
 define('ADMIN_USER', 'admin');
-define('ADMIN_PASS_HASH', password_hash('zuschuss2024!', PASSWORD_DEFAULT)); // Passwort: zuschuss2024!
+define('ADMIN_PASS_HASH', password_hash('Freunde999...', PASSWORD_DEFAULT)); // Passwort: Freunde999...
 
 // E-Mail-Benachrichtigung
-define('NOTIFY_EMAIL', 'info@zuschuss-piloten.de');
+define('NOTIFY_EMAILS', ['andrew.banoub@zuschusspiloten.de', 'team@zuschusspiloten.de']);
 define('NOTIFY_ENABLED', true);
 
 // Sicherheit
