@@ -71,18 +71,85 @@
      * Form Handling
      */
     function initForms() {
-        elements.forms.forEach(form => {
-            form.addEventListener('submit', function(e) {
+        const kontaktFormular = document.getElementById('kontaktFormular');
+
+        if (kontaktFormular) {
+            kontaktFormular.addEventListener('submit', async function(e) {
                 e.preventDefault();
+
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalBtnContent = submitBtn.innerHTML;
+
+                // Loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `
+                    <svg class="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Wird gesendet...</span>
+                `;
 
                 // Get form data
                 const formData = new FormData(this);
                 const data = Object.fromEntries(formData);
 
-                // Here you would typically send the data to your backend
-                console.log('Form submitted:', data);
+                try {
+                    const response = await fetch('backend/submit.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
 
-                // Show success message (customize as needed)
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Success - show message and reset form
+                        showNotification(result.message, 'success');
+                        this.reset();
+
+                        // Show success state in button
+                        submitBtn.innerHTML = `
+                            <iconify-icon icon="solar:check-circle-bold" width="20"></iconify-icon>
+                            <span>Erfolgreich gesendet!</span>
+                        `;
+                        submitBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                        submitBtn.classList.add('bg-emerald-600');
+
+                        // Reset button after 3 seconds
+                        setTimeout(() => {
+                            submitBtn.innerHTML = originalBtnContent;
+                            submitBtn.classList.remove('bg-emerald-600');
+                            submitBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                            submitBtn.disabled = false;
+                        }, 3000);
+                    } else {
+                        // Error
+                        const errorMsg = result.errors ? result.errors.join(', ') : result.message;
+                        showNotification(errorMsg, 'error');
+                        submitBtn.innerHTML = originalBtnContent;
+                        submitBtn.disabled = false;
+                    }
+                } catch (error) {
+                    console.error('Fehler:', error);
+                    showNotification('Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.', 'error');
+                    submitBtn.innerHTML = originalBtnContent;
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        // Handle other forms normally
+        elements.forms.forEach(form => {
+            if (form.id === 'kontaktFormular') return;
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData);
+                console.log('Form submitted:', data);
                 showNotification('Vielen Dank! Wir melden uns in Kürze bei Ihnen.', 'success');
             });
         });

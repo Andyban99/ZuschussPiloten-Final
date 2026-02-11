@@ -1,0 +1,13 @@
+# Zuschuss Piloten - Backend Security
+
+# Deny access to config file
+<Files "config.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Deny access to SQL file
+<Files "database.sql">
+    Order Allow,Deny
+    Deny from all
+</Files>
