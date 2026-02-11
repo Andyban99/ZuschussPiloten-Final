@@ -269,11 +269,15 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const target = parseInt(entry.target.dataset.counter, 10);
-                    animateCounter(entry.target, target);
+                    // Find the counter-value span inside or use the element itself
+                    const valueElement = entry.target.querySelector('.counter-value') || entry.target;
+                    animateCounter(valueElement, target, 1500);
+                    // Add a pulse animation class
+                    entry.target.classList.add('animate-pulse-once');
                     observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.5 });
+        }, { threshold: 0.3 });
 
         counters.forEach(counter => observer.observe(counter));
     }
