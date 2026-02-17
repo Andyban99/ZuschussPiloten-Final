@@ -438,6 +438,74 @@ body {
    6. Component Styles
    -------------------------------------------------------------------------- */
 
+/* Logo Hover Effect */
+.logo-link {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logo-link:hover {
+    transform: translateY(-2px);
+}
+
+.logo-icon {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 0 0 transparent);
+}
+
+.logo-link:hover .logo-icon {
+    transform: scale(1.08);
+    filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.3));
+}
+
+.logo-text-primary {
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #0f172a 0%, #0f172a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+}
+
+.logo-link:hover .logo-text-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    background-size: 200% 200%;
+    animation: gradientText 2s ease infinite;
+}
+
+@keyframes gradientText {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.logo-text-secondary {
+    transition: all 0.3s ease 0.1s;
+}
+
+.logo-link:hover .logo-text-secondary {
+    color: #3b82f6;
+}
+
+/* Logo glow ring effect */
+.logo-link::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+}
+
+.logo-link:hover::before {
+    opacity: 1;
+    transform: scale(1);
+}
+
 /* Navigation */
 .nav-link {
     position: relative;
