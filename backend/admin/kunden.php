@@ -1,6 +1,6 @@
 <?php
 /**
- * Zuschuss Piloten - Admin Dashboard
+ * Zuschuss Piloten - Admin Kundenverwaltung
  */
 
 require_once 'auth.php';
@@ -16,67 +16,39 @@ $suche = trim($_GET['suche'] ?? '');
 $stats = $db->query("
     SELECT
         COUNT(*) as gesamt,
-        SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as neu,
-        SUM(CASE WHEN status = 'in_bearbeitung' THEN 1 ELSE 0 END) as in_bearbeitung,
-        SUM(CASE WHEN status = 'erledigt' THEN 1 ELSE 0 END) as erledigt
-    FROM anfragen
-    WHERE status != 'archiviert'
+        SUM(CASE WHEN aktiv = 1 THEN 1 ELSE 0 END) as aktiv,
+        SUM(CASE WHEN aktiv = 0 THEN 1 ELSE 0 END) as inaktiv,
+        SUM(CASE WHEN letzter_login >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as aktiv_30_tage
+    FROM kunden
 ")->fetch();
 
-// Anfragen laden
-$where = ["status != 'archiviert'"];
+// Kunden laden
+$where = ["1=1"];
 $params = [];
 
-if ($status !== 'alle') {
-    $where[] = "status = :status";
-    $params[':status'] = $status;
+if ($status === 'aktiv') {
+    $where[] = "aktiv = 1";
+} elseif ($status === 'inaktiv') {
+    $where[] = "aktiv = 0";
 }
 
 if ($suche) {
-    $where[] = "(name LIKE :suche OR unternehmen LIKE :suche OR email LIKE :suche)";
+    $where[] = "(vorname LIKE :suche OR nachname LIKE :suche OR email LIKE :suche OR unternehmen LIKE :suche)";
     $params[':suche'] = "%{$suche}%";
 }
 
-$sql = "SELECT * FROM anfragen WHERE " . implode(' AND ', $where) . " ORDER BY
-    CASE WHEN status = 'neu' THEN 0
-         WHEN status = 'in_bearbeitung' THEN 1
-         ELSE 2 END,
-    CASE WHEN prioritaet = 'dringend' THEN 0
-         WHEN prioritaet = 'hoch' THEN 1
-         ELSE 2 END,
-    erstellt_am DESC";
+$sql = "SELECT * FROM kunden WHERE " . implode(' AND ', $where) . " ORDER BY erstellt_am DESC";
 
 $stmt = $db->prepare($sql);
 $stmt->execute($params);
-$anfragen = $stmt->fetchAll();
-
-// Status-Farben
-$statusColors = [
-    'neu' => 'bg-blue-100 text-blue-700 border-blue-200',
-    'in_bearbeitung' => 'bg-amber-100 text-amber-700 border-amber-200',
-    'erledigt' => 'bg-emerald-100 text-emerald-700 border-emerald-200',
-    'archiviert' => 'bg-slate-100 text-slate-500 border-slate-200'
-];
-
-$statusLabels = [
-    'neu' => 'Neu',
-    'in_bearbeitung' => 'In Bearbeitung',
-    'erledigt' => 'Erledigt',
-    'archiviert' => 'Archiviert'
-];
-
-$prioritaetColors = [
-    'normal' => '',
-    'hoch' => 'border-l-4 border-l-amber-400',
-    'dringend' => 'border-l-4 border-l-red-500'
-];
+$kunden = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Zuschuss Piloten Admin</title>
+    <title>Kundenverwaltung - Zuschuss Piloten Admin</title>
     <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -104,31 +76,20 @@ $prioritaetColors = [
 
             <!-- Navigation -->
             <nav class="flex-1 space-y-2">
-                <a href="index.php" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 text-white font-medium">
+                <a href="index.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-all">
                     <iconify-icon icon="solar:widget-bold" width="20"></iconify-icon>
                     Dashboard
                 </a>
                 <a href="index.php?status=neu" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-all">
                     <iconify-icon icon="solar:inbox-bold" width="20"></iconify-icon>
-                    Neue Anfragen
-                    <?php if ($stats['neu'] > 0): ?>
-                    <span class="ml-auto bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded-full"><?= $stats['neu'] ?></span>
-                    <?php endif; ?>
+                    Anfragen
                 </a>
-                <a href="index.php?status=in_bearbeitung" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-all">
-                    <iconify-icon icon="solar:clock-circle-bold" width="20"></iconify-icon>
-                    In Bearbeitung
-                    <?php if ($stats['in_bearbeitung'] > 0): ?>
-                    <span class="ml-auto bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full"><?= $stats['in_bearbeitung'] ?></span>
-                    <?php endif; ?>
-                </a>
-                <a href="index.php?status=erledigt" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-all">
-                    <iconify-icon icon="solar:check-circle-bold" width="20"></iconify-icon>
-                    Erledigt
-                </a>
-                <a href="kunden.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-all">
+                <a href="kunden.php" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 text-white font-medium">
                     <iconify-icon icon="solar:users-group-rounded-bold" width="20"></iconify-icon>
                     Kundendaten
+                    <?php if ($stats['gesamt'] > 0): ?>
+                    <span class="ml-auto bg-emerald-500 text-white text-xs font-bold px-2 py-0.5 rounded-full"><?= $stats['gesamt'] ?></span>
+                    <?php endif; ?>
                 </a>
                 <a href="export.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-all">
                     <iconify-icon icon="solar:download-bold" width="20"></iconify-icon>
@@ -163,20 +124,16 @@ $prioritaetColors = [
             <!-- Header -->
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-900">Dashboard</h1>
-                    <p class="text-slate-500">Übersicht aller Kontaktanfragen</p>
+                    <h1 class="text-2xl font-bold text-slate-900">Kundenverwaltung</h1>
+                    <p class="text-slate-500">Übersicht aller registrierten Kunden</p>
                 </div>
                 <div class="flex items-center gap-4">
                     <!-- Suche -->
                     <form method="GET" class="relative">
                         <iconify-icon icon="solar:magnifer-linear" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" width="18"></iconify-icon>
-                        <input type="text" name="suche" value="<?= e($suche) ?>" placeholder="Suchen..."
+                        <input type="text" name="suche" value="<?= e($suche) ?>" placeholder="Kunde suchen..."
                                class="pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64">
                     </form>
-                    <a href="../../index.html" target="_blank" class="flex items-center gap-2 px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-sm font-medium transition-colors">
-                        <iconify-icon icon="solar:eye-bold" width="18"></iconify-icon>
-                        Website ansehen
-                    </a>
                 </div>
             </div>
 
@@ -185,7 +142,7 @@ $prioritaetColors = [
                 <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center">
-                            <iconify-icon icon="solar:inbox-bold" width="24" class="text-slate-600"></iconify-icon>
+                            <iconify-icon icon="solar:users-group-rounded-bold" width="24" class="text-slate-600"></iconify-icon>
                         </div>
                         <div>
                             <span class="block text-2xl font-bold text-slate-900"><?= $stats['gesamt'] ?></span>
@@ -195,12 +152,12 @@ $prioritaetColors = [
                 </div>
                 <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                            <iconify-icon icon="solar:bell-bold" width="24" class="text-blue-600"></iconify-icon>
+                        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                            <iconify-icon icon="solar:check-circle-bold" width="24" class="text-emerald-600"></iconify-icon>
                         </div>
                         <div>
-                            <span class="block text-2xl font-bold text-slate-900"><?= $stats['neu'] ?></span>
-                            <span class="block text-sm text-slate-500">Neue</span>
+                            <span class="block text-2xl font-bold text-slate-900"><?= $stats['aktiv'] ?></span>
+                            <span class="block text-sm text-slate-500">Aktiv</span>
                         </div>
                     </div>
                 </div>
@@ -210,79 +167,101 @@ $prioritaetColors = [
                             <iconify-icon icon="solar:clock-circle-bold" width="24" class="text-amber-600"></iconify-icon>
                         </div>
                         <div>
-                            <span class="block text-2xl font-bold text-slate-900"><?= $stats['in_bearbeitung'] ?></span>
-                            <span class="block text-sm text-slate-500">In Bearbeitung</span>
+                            <span class="block text-2xl font-bold text-slate-900"><?= $stats['aktiv_30_tage'] ?></span>
+                            <span class="block text-sm text-slate-500">Aktiv (30 Tage)</span>
                         </div>
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                            <iconify-icon icon="solar:check-circle-bold" width="24" class="text-emerald-600"></iconify-icon>
+                        <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                            <iconify-icon icon="solar:close-circle-bold" width="24" class="text-red-600"></iconify-icon>
                         </div>
                         <div>
-                            <span class="block text-2xl font-bold text-slate-900"><?= $stats['erledigt'] ?></span>
-                            <span class="block text-sm text-slate-500">Erledigt</span>
+                            <span class="block text-2xl font-bold text-slate-900"><?= $stats['inaktiv'] ?></span>
+                            <span class="block text-sm text-slate-500">Inaktiv</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Anfragen Liste -->
+            <!-- Kunden Liste -->
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                    <h2 class="font-semibold text-slate-900">Anfragen</h2>
+                    <h2 class="font-semibold text-slate-900">Registrierte Kunden</h2>
                     <div class="flex gap-2">
-                        <a href="index.php" class="px-3 py-1.5 text-sm rounded-lg <?= $status === 'alle' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100' ?> transition-colors">Alle</a>
-                        <a href="index.php?status=neu" class="px-3 py-1.5 text-sm rounded-lg <?= $status === 'neu' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100' ?> transition-colors">Neu</a>
-                        <a href="index.php?status=in_bearbeitung" class="px-3 py-1.5 text-sm rounded-lg <?= $status === 'in_bearbeitung' ? 'bg-amber-500 text-white' : 'text-slate-600 hover:bg-slate-100' ?> transition-colors">In Bearbeitung</a>
-                        <a href="index.php?status=erledigt" class="px-3 py-1.5 text-sm rounded-lg <?= $status === 'erledigt' ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100' ?> transition-colors">Erledigt</a>
+                        <a href="kunden.php" class="px-3 py-1.5 text-sm rounded-lg <?= $status === 'alle' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100' ?> transition-colors">Alle</a>
+                        <a href="kunden.php?status=aktiv" class="px-3 py-1.5 text-sm rounded-lg <?= $status === 'aktiv' ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100' ?> transition-colors">Aktiv</a>
+                        <a href="kunden.php?status=inaktiv" class="px-3 py-1.5 text-sm rounded-lg <?= $status === 'inaktiv' ? 'bg-red-600 text-white' : 'text-slate-600 hover:bg-slate-100' ?> transition-colors">Inaktiv</a>
                     </div>
                 </div>
 
-                <?php if (empty($anfragen)): ?>
+                <?php if (empty($kunden)): ?>
                 <div class="p-12 text-center">
-                    <iconify-icon icon="solar:inbox-bold" width="48" class="text-slate-300 mb-4"></iconify-icon>
-                    <p class="text-slate-500">Keine Anfragen gefunden</p>
+                    <iconify-icon icon="solar:users-group-rounded-bold" width="48" class="text-slate-300 mb-4"></iconify-icon>
+                    <p class="text-slate-500">Noch keine Kunden registriert</p>
                 </div>
                 <?php else: ?>
                 <table class="w-full">
                     <thead class="bg-slate-50 text-left text-sm text-slate-500">
                         <tr>
                             <th class="px-6 py-3 font-medium">#</th>
-                            <th class="px-6 py-3 font-medium">Kontakt</th>
+                            <th class="px-6 py-3 font-medium">Kunde</th>
                             <th class="px-6 py-3 font-medium">Unternehmen</th>
+                            <th class="px-6 py-3 font-medium">Kontakt</th>
                             <th class="px-6 py-3 font-medium">Status</th>
-                            <th class="px-6 py-3 font-medium">Datum</th>
+                            <th class="px-6 py-3 font-medium">Registriert</th>
                             <th class="px-6 py-3 font-medium"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        <?php foreach ($anfragen as $anfrage): ?>
-                        <tr class="hover:bg-slate-50 transition-colors <?= $prioritaetColors[$anfrage['prioritaet']] ?>">
-                            <td class="px-6 py-4 text-sm text-slate-400"><?= $anfrage['id'] ?></td>
+                        <?php foreach ($kunden as $kunde): ?>
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-4 text-sm text-slate-400"><?= $kunde['id'] ?></td>
                             <td class="px-6 py-4">
-                                <div class="font-medium text-slate-900"><?= e($anfrage['name']) ?></div>
-                                <div class="text-sm text-slate-500"><?= e($anfrage['email']) ?></div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold">
+                                        <?= strtoupper(substr($kunde['vorname'], 0, 1) . substr($kunde['nachname'], 0, 1)) ?>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-slate-900"><?= e($kunde['vorname'] . ' ' . $kunde['nachname']) ?></div>
+                                        <div class="text-sm text-slate-500"><?= e($kunde['email']) ?></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-slate-700">
+                                <?= e($kunde['unternehmen'] ?: '-') ?>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="text-slate-700"><?= e($anfrage['unternehmen']) ?></div>
-                                <?php if ($anfrage['telefon']): ?>
-                                <div class="text-sm text-slate-400"><?= e($anfrage['telefon']) ?></div>
+                                <?php if ($kunde['telefon']): ?>
+                                <div class="text-sm text-slate-700"><?= e($kunde['telefon']) ?></div>
+                                <?php endif; ?>
+                                <?php if ($kunde['ort']): ?>
+                                <div class="text-xs text-slate-400"><?= e($kunde['plz'] . ' ' . $kunde['ort']) ?></div>
+                                <?php else: ?>
+                                <span class="text-slate-400">-</span>
                                 <?php endif; ?>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border <?= $statusColors[$anfrage['status']] ?>">
-                                    <?= $statusLabels[$anfrage['status']] ?>
+                                <?php if ($kunde['aktiv']): ?>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border bg-emerald-100 text-emerald-700 border-emerald-200">
+                                    Aktiv
                                 </span>
+                                <?php else: ?>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border bg-red-100 text-red-700 border-red-200">
+                                    Inaktiv
+                                </span>
+                                <?php endif; ?>
                             </td>
                             <td class="px-6 py-4 text-sm text-slate-500">
-                                <?= date('d.m.Y', strtotime($anfrage['erstellt_am'])) ?>
-                                <div class="text-xs text-slate-400"><?= date('H:i', strtotime($anfrage['erstellt_am'])) ?> Uhr</div>
+                                <?= date('d.m.Y', strtotime($kunde['erstellt_am'])) ?>
+                                <?php if ($kunde['letzter_login']): ?>
+                                <div class="text-xs text-slate-400">Login: <?= date('d.m.y', strtotime($kunde['letzter_login'])) ?></div>
+                                <?php endif; ?>
                             </td>
                             <td class="px-6 py-4">
-                                <a href="view.php?id=<?= $anfrage['id'] ?>" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors">
-                                    Öffnen
+                                <a href="kunde_view.php?id=<?= $kunde['id'] ?>" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors">
+                                    Details
                                     <iconify-icon icon="solar:arrow-right-linear" width="16"></iconify-icon>
                                 </a>
                             </td>

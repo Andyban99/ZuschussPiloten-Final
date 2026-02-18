@@ -1,0 +1,5 @@
+# Direkten Zugriff auf Dateien verhindern
+<FilesMatch ".*">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
