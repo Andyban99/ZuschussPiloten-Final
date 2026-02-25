@@ -41,6 +41,30 @@ function formatIBAN($iban) {
     if (empty($iban)) return '-';
     return implode(' ', str_split($iban, 4));
 }
+
+// Geschäftsjahre parsen
+$geschaeftsjahre = [];
+if (!empty($kunde['geschaeftsjahre'])) {
+    $geschaeftsjahre = json_decode($kunde['geschaeftsjahre'], true) ?: [];
+}
+
+// Wirtschaftlich berechtigte Personen parsen
+$wirtschaftlich_berechtigte = [];
+if (!empty($kunde['wirtschaftlich_berechtigte'])) {
+    $wirtschaftlich_berechtigte = json_decode($kunde['wirtschaftlich_berechtigte'], true) ?: [];
+}
+
+// Abschreibungen parsen
+$abschreibungen = [];
+if (!empty($kunde['abschreibungen'])) {
+    $abschreibungen = json_decode($kunde['abschreibungen'], true) ?: [];
+}
+
+// Investitionsgüter parsen
+$investitionsgueter = [];
+if (!empty($kunde['investitionsgueter'])) {
+    $investitionsgueter = json_decode($kunde['investitionsgueter'], true) ?: [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -147,9 +171,25 @@ function formatIBAN($iban) {
                                         <a href="mailto:<?= e($kunde['email']) ?>" class="text-blue-600 hover:underline"><?= e($kunde['email']) ?></a>
                                     </p>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Unternehmensdaten -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-200 flex items-center gap-3">
+                            <iconify-icon icon="solar:buildings-bold" class="text-blue-600" width="20"></iconify-icon>
+                            <h2 class="font-semibold text-slate-900">Unternehmensdaten</h2>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-2 gap-6">
                                 <div>
                                     <span class="text-xs text-slate-500 uppercase tracking-wide">Unternehmen</span>
-                                    <p class="mt-1 text-slate-900"><?= e($kunde['unternehmen'] ?: '-') ?></p>
+                                    <p class="mt-1 text-slate-900 font-medium"><?= e($kunde['unternehmen'] ?: '-') ?></p>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-500 uppercase tracking-wide">Rechtsform</span>
+                                    <p class="mt-1 text-slate-900"><?= e($kunde['rechtsform'] ?? '-') ?></p>
                                 </div>
                                 <div>
                                     <span class="text-xs text-slate-500 uppercase tracking-wide">Telefon</span>
@@ -161,20 +201,23 @@ function formatIBAN($iban) {
                                         <?php endif; ?>
                                     </p>
                                 </div>
-                                <div class="col-span-2">
-                                    <span class="text-xs text-slate-500 uppercase tracking-wide">Webseite</span>
+                                <div>
+                                    <span class="text-xs text-slate-500 uppercase tracking-wide">E-Mail (Unternehmen)</span>
                                     <p class="mt-1">
-                                        <?php if ($kunde['hat_webseite'] && $kunde['webseite_url']): ?>
-                                        <a href="<?= e($kunde['webseite_url']) ?>" target="_blank" class="text-blue-600 hover:underline flex items-center gap-1">
-                                            <?= e($kunde['webseite_url']) ?>
-                                            <iconify-icon icon="solar:arrow-right-up-linear" width="14"></iconify-icon>
-                                        </a>
-                                        <?php elseif ($kunde['hat_webseite']): ?>
-                                        <span class="text-slate-500">Ja (URL nicht angegeben)</span>
+                                        <?php if (!empty($kunde['unternehmen_email'])): ?>
+                                        <a href="mailto:<?= e($kunde['unternehmen_email']) ?>" class="text-blue-600 hover:underline"><?= e($kunde['unternehmen_email']) ?></a>
                                         <?php else: ?>
-                                        <span class="text-slate-400">Keine Webseite</span>
+                                        <span class="text-slate-400">-</span>
                                         <?php endif; ?>
                                     </p>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-500 uppercase tracking-wide">Gründungsdatum</span>
+                                    <p class="mt-1 text-slate-900"><?= !empty($kunde['gruendungsdatum']) ? date('d.m.Y', strtotime($kunde['gruendungsdatum'])) : '-' ?></p>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-500 uppercase tracking-wide">Branchenschlüssel</span>
+                                    <p class="mt-1 text-slate-900 font-mono"><?= e($kunde['branchenschluessel'] ?: '-') ?></p>
                                 </div>
                             </div>
                         </div>
@@ -184,7 +227,7 @@ function formatIBAN($iban) {
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                         <div class="px-6 py-4 border-b border-slate-200 flex items-center gap-3">
                             <iconify-icon icon="solar:home-bold" class="text-blue-600" width="20"></iconify-icon>
-                            <h2 class="font-semibold text-slate-900">Adresse</h2>
+                            <h2 class="font-semibold text-slate-900">Unternehmensadresse</h2>
                         </div>
                         <div class="p-6">
                             <?php if ($kunde['strasse'] || $kunde['ort']): ?>
@@ -202,6 +245,71 @@ function formatIBAN($iban) {
                         </div>
                     </div>
 
+                    <!-- Durchführungsort -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-200 flex items-center gap-3">
+                            <iconify-icon icon="solar:map-point-bold" class="text-blue-600" width="20"></iconify-icon>
+                            <h2 class="font-semibold text-slate-900">Durchführungsort des Vorhabens</h2>
+                        </div>
+                        <div class="p-6">
+                            <?php if ($kunde['durchfuehrungsort_gleich_adresse'] ?? 1): ?>
+                            <p class="text-slate-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:check-circle-bold" class="text-emerald-600" width="18"></iconify-icon>
+                                Gleich der Unternehmensadresse
+                            </p>
+                            <?php elseif ($kunde['durchfuehrungsort_strasse'] || $kunde['durchfuehrungsort_ort']): ?>
+                            <p class="text-slate-900">
+                                <?php if ($kunde['durchfuehrungsort_strasse']): ?>
+                                <?= e($kunde['durchfuehrungsort_strasse']) ?> <?= e($kunde['durchfuehrungsort_hausnummer']) ?><br>
+                                <?php endif; ?>
+                                <?php if ($kunde['durchfuehrungsort_plz'] || $kunde['durchfuehrungsort_ort']): ?>
+                                <?= e($kunde['durchfuehrungsort_plz']) ?> <?= e($kunde['durchfuehrungsort_ort']) ?>
+                                <?php endif; ?>
+                            </p>
+                            <?php else: ?>
+                            <p class="text-slate-400">Keine separate Adresse hinterlegt</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Wirtschaftlich berechtigte Personen -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-200 flex items-center gap-3">
+                            <iconify-icon icon="solar:users-group-two-rounded-bold" class="text-blue-600" width="20"></iconify-icon>
+                            <h2 class="font-semibold text-slate-900">Wirtschaftlich berechtigte Personen</h2>
+                        </div>
+                        <div class="p-6">
+                            <?php if (!empty($wirtschaftlich_berechtigte)): ?>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse text-sm">
+                                    <thead>
+                                        <tr class="bg-slate-50">
+                                            <th class="px-4 py-2 text-left font-semibold text-slate-700 border border-slate-200">Name</th>
+                                            <th class="px-4 py-2 text-left font-semibold text-slate-700 border border-slate-200">Steuer-ID</th>
+                                            <th class="px-4 py-2 text-left font-semibold text-slate-700 border border-slate-200">Geburtsdatum</th>
+                                            <th class="px-4 py-2 text-right font-semibold text-slate-700 border border-slate-200">Anteil</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($wirtschaftlich_berechtigte as $wb): ?>
+                                        <?php if (!empty($wb['vorname']) || !empty($wb['nachname']) || !empty($wb['anteil'])): ?>
+                                        <tr>
+                                            <td class="px-4 py-2 border border-slate-200 font-medium"><?= e(trim(($wb['vorname'] ?? '') . ' ' . ($wb['nachname'] ?? ''))) ?: '-' ?></td>
+                                            <td class="px-4 py-2 border border-slate-200 font-mono"><?= e($wb['steuer_id'] ?? '-') ?></td>
+                                            <td class="px-4 py-2 border border-slate-200"><?= !empty($wb['geburtsdatum']) ? date('d.m.Y', strtotime($wb['geburtsdatum'])) : '-' ?></td>
+                                            <td class="px-4 py-2 border border-slate-200 text-right"><?= e($wb['anteil'] ?? '-') ?> %</td>
+                                        </tr>
+                                        <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <?php else: ?>
+                            <p class="text-slate-400">Keine wirtschaftlich berechtigten Personen hinterlegt</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
                     <!-- Steuerdaten -->
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                         <div class="px-6 py-4 border-b border-slate-200 flex items-center gap-3">
@@ -212,15 +320,7 @@ function formatIBAN($iban) {
                             <div class="grid grid-cols-2 gap-6">
                                 <div>
                                     <span class="text-xs text-slate-500 uppercase tracking-wide">Elster-Steuernummer</span>
-                                    <p class="mt-1 text-slate-900 font-mono">
-                                        <?php if ($kunde['hat_elster_steuernummer'] && $kunde['elster_steuernummer']): ?>
-                                        <?= e($kunde['elster_steuernummer']) ?>
-                                        <?php elseif ($kunde['hat_elster_steuernummer']): ?>
-                                        <span class="text-slate-500">Vorhanden (nicht angegeben)</span>
-                                        <?php else: ?>
-                                        <span class="text-slate-400">-</span>
-                                        <?php endif; ?>
-                                    </p>
+                                    <p class="mt-1 text-slate-900 font-mono"><?= e($kunde['elster_steuernummer'] ?: '-') ?></p>
                                 </div>
                                 <div>
                                     <span class="text-xs text-slate-500 uppercase tracking-wide">USt-IdNr</span>
@@ -230,9 +330,240 @@ function formatIBAN($iban) {
                                     <span class="text-xs text-slate-500 uppercase tracking-wide">Wirtschafts-ID (W-IdNr.)</span>
                                     <p class="mt-1 text-slate-900 font-mono"><?= e($kunde['w_idnr'] ?: '-') ?></p>
                                 </div>
-                                <div>
-                                    <span class="text-xs text-slate-500 uppercase tracking-wide">Branchenschlüssel</span>
-                                    <p class="mt-1 text-slate-900 font-mono"><?= e($kunde['branchenschluessel'] ?: '-') ?></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Verdiente Abschreibungen -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-200 flex items-center gap-3">
+                            <iconify-icon icon="solar:chart-2-bold" class="text-blue-600" width="20"></iconify-icon>
+                            <h2 class="font-semibold text-slate-900">Verdiente Abschreibungen</h2>
+                        </div>
+                        <div class="p-6">
+                            <?php if (!empty($abschreibungen)): ?>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse text-sm">
+                                    <thead>
+                                        <tr class="bg-slate-50">
+                                            <th class="px-4 py-2 text-left font-semibold text-slate-700 border border-slate-200">Jahr</th>
+                                            <th class="px-4 py-2 text-right font-semibold text-slate-700 border border-slate-200">Abschreibungen (EUR)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach (['2025', '2024', '2023'] as $jahr): ?>
+                                        <tr>
+                                            <td class="px-4 py-2 border border-slate-200 font-medium"><?= $jahr ?></td>
+                                            <td class="px-4 py-2 border border-slate-200 text-right"><?= !empty($abschreibungen[$jahr]) ? number_format((float)$abschreibungen[$jahr], 0, ',', '.') . ' EUR' : '-' ?></td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <?php else: ?>
+                            <p class="text-slate-400">Keine Abschreibungen hinterlegt</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Geschäftsjahre -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-200 flex items-center gap-3">
+                            <iconify-icon icon="solar:chart-square-bold" class="text-blue-600" width="20"></iconify-icon>
+                            <h2 class="font-semibold text-slate-900">Geschäftsjahre</h2>
+                        </div>
+                        <div class="p-6">
+                            <?php if (!empty($geschaeftsjahre)): ?>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse text-sm">
+                                    <thead>
+                                        <tr class="bg-slate-50">
+                                            <th class="px-4 py-2 text-left font-semibold text-slate-700 border border-slate-200">Jahr</th>
+                                            <th class="px-4 py-2 text-right font-semibold text-slate-700 border border-slate-200">Beschäftigte</th>
+                                            <th class="px-4 py-2 text-right font-semibold text-slate-700 border border-slate-200">Umsatz</th>
+                                            <th class="px-4 py-2 text-right font-semibold text-slate-700 border border-slate-200">Bilanzsumme</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach (['2025', '2024', '2023'] as $jahr): ?>
+                                        <?php $gj = $geschaeftsjahre[$jahr] ?? []; ?>
+                                        <tr>
+                                            <td class="px-4 py-2 border border-slate-200 font-medium"><?= $jahr ?></td>
+                                            <td class="px-4 py-2 border border-slate-200 text-right"><?= e($gj['beschaeftigte'] ?? '-') ?></td>
+                                            <td class="px-4 py-2 border border-slate-200 text-right"><?= !empty($gj['umsatz']) ? number_format((float)$gj['umsatz'], 2, ',', '.') . ' EUR' : '-' ?></td>
+                                            <td class="px-4 py-2 border border-slate-200 text-right"><?= !empty($gj['bilanzsumme']) ? number_format((float)$gj['bilanzsumme'], 2, ',', '.') . ' EUR' : '-' ?></td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <?php else: ?>
+                            <p class="text-slate-400">Keine Geschäftsjahre-Daten hinterlegt</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Arbeitsplätze -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-200 flex items-center gap-3">
+                            <iconify-icon icon="solar:user-check-bold" class="text-blue-600" width="20"></iconify-icon>
+                            <h2 class="font-semibold text-slate-900">Arbeitsplätze</h2>
+                        </div>
+                        <div class="p-6">
+                            <!-- Vorhandene Arbeitsplätze -->
+                            <div class="mb-6">
+                                <h4 class="text-sm font-semibold text-slate-700 mb-3">Vorhandene Dauerarbeitsplätze bei Antragstellung (VZÄ)</h4>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div class="p-3 bg-slate-50 rounded-xl text-center">
+                                        <span class="block text-xs text-slate-500 mb-1">Frauen</span>
+                                        <span class="text-lg font-semibold text-slate-900"><?= e($kunde['arbeitsplaetze_frauen'] ?? '-') ?></span>
+                                    </div>
+                                    <div class="p-3 bg-slate-50 rounded-xl text-center">
+                                        <span class="block text-xs text-slate-500 mb-1">Männer</span>
+                                        <span class="text-lg font-semibold text-slate-900"><?= e($kunde['arbeitsplaetze_maenner'] ?? '-') ?></span>
+                                    </div>
+                                    <div class="p-3 bg-slate-50 rounded-xl text-center">
+                                        <span class="block text-xs text-slate-500 mb-1">Ausbildung</span>
+                                        <span class="text-lg font-semibold text-slate-900"><?= e($kunde['arbeitsplaetze_ausbildung'] ?? '-') ?></span>
+                                    </div>
+                                    <div class="p-3 bg-slate-50 rounded-xl text-center">
+                                        <span class="block text-xs text-slate-500 mb-1">Leiharbeiter</span>
+                                        <span class="text-lg font-semibold text-slate-900"><?= e($kunde['arbeitsplaetze_leiharbeiter'] ?? '-') ?></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Geplante Arbeitsplätze -->
+                            <div>
+                                <h4 class="text-sm font-semibold text-slate-700 mb-3">Geplante zusätzliche Arbeitsplätze nach Investition (VZÄ)</h4>
+                                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                    <div class="p-3 bg-emerald-50 rounded-xl text-center">
+                                        <span class="block text-xs text-emerald-600 mb-1">Frauen</span>
+                                        <span class="text-lg font-semibold text-emerald-700"><?= e($kunde['geplante_arbeitsplaetze_frauen'] ?? '-') ?></span>
+                                    </div>
+                                    <div class="p-3 bg-emerald-50 rounded-xl text-center">
+                                        <span class="block text-xs text-emerald-600 mb-1">Männer</span>
+                                        <span class="text-lg font-semibold text-emerald-700"><?= e($kunde['geplante_arbeitsplaetze_maenner'] ?? '-') ?></span>
+                                    </div>
+                                    <div class="p-3 bg-emerald-50 rounded-xl text-center">
+                                        <span class="block text-xs text-emerald-600 mb-1">Ausbildung</span>
+                                        <span class="text-lg font-semibold text-emerald-700"><?= e($kunde['geplante_arbeitsplaetze_ausbildung'] ?? '-') ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Investitionsgüterliste -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-200 flex items-center gap-3">
+                            <iconify-icon icon="solar:box-bold" class="text-blue-600" width="20"></iconify-icon>
+                            <h2 class="font-semibold text-slate-900">Investitionsgüterliste</h2>
+                        </div>
+                        <div class="p-6">
+                            <?php if (!empty($investitionsgueter)): ?>
+                            <?php
+                            $gesamtWert = 0;
+                            foreach ($investitionsgueter as $inv) {
+                                if (!empty($inv['wert'])) {
+                                    $gesamtWert += (float)$inv['wert'];
+                                }
+                            }
+                            ?>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse text-sm">
+                                    <thead>
+                                        <tr class="bg-slate-50">
+                                            <th class="px-4 py-2 text-left font-semibold text-slate-700 border border-slate-200">Bezeichnung</th>
+                                            <th class="px-4 py-2 text-right font-semibold text-slate-700 border border-slate-200">Wert</th>
+                                            <th class="px-4 py-2 text-center font-semibold text-slate-700 border border-slate-200">Gebraucht</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($investitionsgueter as $inv): ?>
+                                        <?php if (!empty($inv['bezeichnung']) || !empty($inv['wert'])): ?>
+                                        <tr>
+                                            <td class="px-4 py-2 border border-slate-200"><?= e($inv['bezeichnung'] ?: '-') ?></td>
+                                            <td class="px-4 py-2 border border-slate-200 text-right"><?= !empty($inv['wert']) ? number_format((float)$inv['wert'], 2, ',', '.') . ' EUR' : '-' ?></td>
+                                            <td class="px-4 py-2 border border-slate-200 text-center">
+                                                <?php if ($inv['gebraucht'] ?? false): ?>
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded bg-amber-100 text-amber-700">
+                                                    <iconify-icon icon="solar:check-circle-bold" width="12"></iconify-icon>
+                                                    Ja
+                                                </span>
+                                                <?php else: ?>
+                                                <span class="text-slate-400">-</span>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                        <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="bg-blue-50">
+                                            <td class="px-4 py-2 border border-slate-200 font-semibold text-slate-900">Gesamtsumme</td>
+                                            <td class="px-4 py-2 border border-slate-200 text-right font-semibold text-blue-700"><?= number_format($gesamtWert, 2, ',', '.') ?> EUR</td>
+                                            <td class="px-4 py-2 border border-slate-200"></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <?php else: ?>
+                            <p class="text-slate-400">Keine Investitionsgüter hinterlegt</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Webseite & Social Media -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-200 flex items-center gap-3">
+                            <iconify-icon icon="solar:global-bold" class="text-blue-600" width="20"></iconify-icon>
+                            <h2 class="font-semibold text-slate-900">Webseite & Social Media</h2>
+                        </div>
+                        <div class="p-6">
+                            <div class="mb-4">
+                                <span class="text-xs text-slate-500 uppercase tracking-wide">Webseite</span>
+                                <p class="mt-1">
+                                    <?php if (!empty($kunde['webseite_url'])): ?>
+                                    <a href="<?= e($kunde['webseite_url']) ?>" target="_blank" class="text-blue-600 hover:underline flex items-center gap-1">
+                                        <?= e($kunde['webseite_url']) ?>
+                                        <iconify-icon icon="solar:arrow-right-up-linear" width="14"></iconify-icon>
+                                    </a>
+                                    <?php else: ?>
+                                    <span class="text-slate-400">-</span>
+                                    <?php endif; ?>
+                                </p>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-500 uppercase tracking-wide mb-3 block">Social Media Kanäle</span>
+                                <div class="flex flex-wrap gap-3">
+                                    <?php if (!empty($kunde['social_youtube'])): ?>
+                                    <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-700 rounded-lg text-sm">
+                                        <iconify-icon icon="logos:youtube-icon" width="16"></iconify-icon>
+                                        YouTube
+                                    </span>
+                                    <?php endif; ?>
+                                    <?php if (!empty($kunde['social_instagram'])): ?>
+                                    <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-pink-50 text-pink-700 rounded-lg text-sm">
+                                        <iconify-icon icon="skill-icons:instagram" width="16"></iconify-icon>
+                                        Instagram
+                                    </span>
+                                    <?php endif; ?>
+                                    <?php if (!empty($kunde['social_linkedin'])): ?>
+                                    <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm">
+                                        <iconify-icon icon="skill-icons:linkedin" width="16"></iconify-icon>
+                                        LinkedIn
+                                    </span>
+                                    <?php endif; ?>
+                                    <?php if (!empty($kunde['social_facebook'])): ?>
+                                    <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm">
+                                        <iconify-icon icon="logos:facebook" width="16"></iconify-icon>
+                                        Facebook
+                                    </span>
+                                    <?php endif; ?>
+                                    <?php if (empty($kunde['social_youtube']) && empty($kunde['social_instagram']) && empty($kunde['social_linkedin']) && empty($kunde['social_facebook'])): ?>
+                                    <span class="text-slate-400">Keine Social Media Kanäle angegeben</span>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -318,8 +649,24 @@ function formatIBAN($iban) {
                                 <?php endif; ?>
                             </div>
                             <div class="flex items-center justify-between">
+                                <span class="text-sm text-slate-500">Unternehmensdaten</span>
+                                <?php if ($kunde['unternehmen'] && $kunde['rechtsform']): ?>
+                                <iconify-icon icon="solar:check-circle-bold" class="text-emerald-600" width="20"></iconify-icon>
+                                <?php else: ?>
+                                <iconify-icon icon="solar:clock-circle-bold" class="text-amber-500" width="20"></iconify-icon>
+                                <?php endif; ?>
+                            </div>
+                            <div class="flex items-center justify-between">
                                 <span class="text-sm text-slate-500">Adresse</span>
                                 <?php if ($kunde['strasse'] && $kunde['ort']): ?>
+                                <iconify-icon icon="solar:check-circle-bold" class="text-emerald-600" width="20"></iconify-icon>
+                                <?php else: ?>
+                                <iconify-icon icon="solar:clock-circle-bold" class="text-amber-500" width="20"></iconify-icon>
+                                <?php endif; ?>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-slate-500">Wirtschaftl. Berechtigte</span>
+                                <?php if (!empty($wirtschaftlich_berechtigte)): ?>
                                 <iconify-icon icon="solar:check-circle-bold" class="text-emerald-600" width="20"></iconify-icon>
                                 <?php else: ?>
                                 <iconify-icon icon="solar:clock-circle-bold" class="text-amber-500" width="20"></iconify-icon>
@@ -344,6 +691,38 @@ function formatIBAN($iban) {
                             <div class="flex items-center justify-between">
                                 <span class="text-sm text-slate-500">Excel-Datei</span>
                                 <?php if ($kunde['excel_datei']): ?>
+                                <iconify-icon icon="solar:check-circle-bold" class="text-emerald-600" width="20"></iconify-icon>
+                                <?php else: ?>
+                                <iconify-icon icon="solar:clock-circle-bold" class="text-amber-500" width="20"></iconify-icon>
+                                <?php endif; ?>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-slate-500">Geschäftsjahre</span>
+                                <?php if (!empty($geschaeftsjahre)): ?>
+                                <iconify-icon icon="solar:check-circle-bold" class="text-emerald-600" width="20"></iconify-icon>
+                                <?php else: ?>
+                                <iconify-icon icon="solar:clock-circle-bold" class="text-amber-500" width="20"></iconify-icon>
+                                <?php endif; ?>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-slate-500">Abschreibungen</span>
+                                <?php if (!empty($abschreibungen)): ?>
+                                <iconify-icon icon="solar:check-circle-bold" class="text-emerald-600" width="20"></iconify-icon>
+                                <?php else: ?>
+                                <iconify-icon icon="solar:clock-circle-bold" class="text-amber-500" width="20"></iconify-icon>
+                                <?php endif; ?>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-slate-500">Arbeitsplätze</span>
+                                <?php if ($kunde['arbeitsplaetze_frauen'] !== null || $kunde['arbeitsplaetze_maenner'] !== null): ?>
+                                <iconify-icon icon="solar:check-circle-bold" class="text-emerald-600" width="20"></iconify-icon>
+                                <?php else: ?>
+                                <iconify-icon icon="solar:clock-circle-bold" class="text-amber-500" width="20"></iconify-icon>
+                                <?php endif; ?>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-slate-500">Investitionsgüter</span>
+                                <?php if (!empty($investitionsgueter)): ?>
                                 <iconify-icon icon="solar:check-circle-bold" class="text-emerald-600" width="20"></iconify-icon>
                                 <?php else: ?>
                                 <iconify-icon icon="solar:clock-circle-bold" class="text-amber-500" width="20"></iconify-icon>
