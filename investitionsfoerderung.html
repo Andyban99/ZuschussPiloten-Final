@@ -27,7 +27,7 @@
     <!-- Custom Styles -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body class="bg-slate-50 text-slate-800 overflow-x-hidden">
 
     <!-- ========================================
          NAVIGATION
@@ -232,7 +232,7 @@
         <div class="absolute bottom-20 right-10 w-80 h-80 bg-emerald-100/30 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
-            <div class="grid md:grid-cols-2 gap-16 items-start">
+            <div class="grid md:grid-cols-2 gap-8 md:gap-16 items-start">
 
                 <!-- Left: Target Group - "Wer wird gefördert?" -->
                 <div class="eligibility-section">
@@ -262,43 +262,43 @@
 
                         <div class="space-y-3">
                             <!-- Industry Card 1 -->
-                            <div class="industry-card group flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-200 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/50 transition-all duration-300 cursor-pointer">
-                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
-                                    <iconify-icon icon="solar:sledgehammer-bold-duotone" class="text-white" width="24"></iconify-icon>
+                            <div class="industry-card group flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white rounded-xl border border-slate-200 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/50 transition-all duration-300 cursor-pointer">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300 shrink-0">
+                                    <iconify-icon icon="solar:sledgehammer-bold-duotone" class="text-white" width="20"></iconify-icon>
                                 </div>
-                                <div class="flex-1">
-                                    <h4 class="font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors">Produzierendes Gewerbe</h4>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors text-sm sm:text-base">Produzierendes Gewerbe</h4>
                                     <p class="text-xs text-slate-500">Industrie & Fertigung</p>
                                 </div>
-                                <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-8 h-8 rounded-full bg-emerald-100 items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex">
                                     <iconify-icon icon="solar:check-circle-bold" class="text-emerald-600" width="20"></iconify-icon>
                                 </div>
                             </div>
 
                             <!-- Industry Card 2 -->
-                            <div class="industry-card group flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-200 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/50 transition-all duration-300 cursor-pointer">
-                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
-                                    <iconify-icon icon="solar:box-bold-duotone" class="text-white" width="24"></iconify-icon>
+                            <div class="industry-card group flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white rounded-xl border border-slate-200 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/50 transition-all duration-300 cursor-pointer">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300 shrink-0">
+                                    <iconify-icon icon="solar:box-bold-duotone" class="text-white" width="20"></iconify-icon>
                                 </div>
-                                <div class="flex-1">
-                                    <h4 class="font-semibold text-slate-900 group-hover:text-blue-700 transition-colors">Großhandel & Logistik</h4>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-semibold text-slate-900 group-hover:text-blue-700 transition-colors text-sm sm:text-base">Großhandel & Logistik</h4>
                                     <p class="text-xs text-slate-500">Distribution & Lagerung</p>
                                 </div>
-                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex">
                                     <iconify-icon icon="solar:check-circle-bold" class="text-blue-600" width="20"></iconify-icon>
                                 </div>
                             </div>
 
                             <!-- Industry Card 3 -->
-                            <div class="industry-card group flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-200 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/50 transition-all duration-300 cursor-pointer">
-                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
-                                    <iconify-icon icon="solar:bed-bold-duotone" class="text-white" width="24"></iconify-icon>
+                            <div class="industry-card group flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white rounded-xl border border-slate-200 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/50 transition-all duration-300 cursor-pointer">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300 shrink-0">
+                                    <iconify-icon icon="solar:bed-bold-duotone" class="text-white" width="20"></iconify-icon>
                                 </div>
-                                <div class="flex-1">
-                                    <h4 class="font-semibold text-slate-900 group-hover:text-indigo-700 transition-colors">Hotellerie & Tourismus</h4>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-semibold text-slate-900 group-hover:text-indigo-700 transition-colors text-sm sm:text-base">Hotellerie & Tourismus</h4>
                                     <p class="text-xs text-slate-500">Beherbergung & Gastgewerbe</p>
                                 </div>
-                                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-8 h-8 rounded-full bg-indigo-100 items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex">
                                     <iconify-icon icon="solar:check-circle-bold" class="text-indigo-600" width="20"></iconify-icon>
                                 </div>
                             </div>
@@ -377,20 +377,20 @@
                         <!-- Card 1: Immobilien -->
                         <div class="investment-card group relative bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-blue-300 hover:shadow-xl transition-all duration-500">
                             <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-blue-400 to-blue-600 group-hover:w-2 transition-all duration-300"></div>
-                            <div class="p-5 pl-6">
-                                <div class="flex items-start gap-4">
-                                    <div class="w-14 h-14 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center group-hover:bg-blue-100 group-hover:scale-110 transition-all duration-300">
-                                        <iconify-icon icon="solar:city-bold-duotone" class="text-blue-600" width="28"></iconify-icon>
+                            <div class="p-4 sm:p-5 pl-5 sm:pl-6">
+                                <div class="flex items-start gap-3 sm:gap-4">
+                                    <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center group-hover:bg-blue-100 group-hover:scale-110 transition-all duration-300 shrink-0">
+                                        <iconify-icon icon="solar:city-bold-duotone" class="text-blue-600" width="24"></iconify-icon>
                                     </div>
-                                    <div class="flex-1">
-                                        <div class="flex items-center justify-between mb-1">
-                                            <h3 class="font-bold text-slate-900 text-lg">Gewerbeimmobilien</h3>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+                                            <h3 class="font-bold text-slate-900 text-base sm:text-lg">Gewerbeimmobilien</h3>
                                             <span class="px-2.5 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-lg">Bis 45%</span>
                                         </div>
                                         <p class="text-sm text-slate-500 leading-relaxed mb-3">
                                             Erwerb, Neubau oder Erweiterungsbauten von Gewerbeimmobilien.
                                         </p>
-                                        <div class="flex items-center gap-4 text-xs">
+                                        <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-xs">
                                             <span class="flex items-center gap-1.5 text-emerald-600">
                                                 <iconify-icon icon="solar:check-circle-bold" width="14"></iconify-icon>
                                                 Gebäude
@@ -412,20 +412,20 @@
                         <!-- Card 2: Maschinen -->
                         <div class="investment-card group relative bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-indigo-300 hover:shadow-xl transition-all duration-500">
                             <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-400 to-indigo-600 group-hover:w-2 transition-all duration-300"></div>
-                            <div class="p-5 pl-6">
-                                <div class="flex items-start gap-4">
-                                    <div class="w-14 h-14 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center group-hover:bg-indigo-100 group-hover:scale-110 transition-all duration-300">
-                                        <iconify-icon icon="solar:settings-bold-duotone" class="text-indigo-600" width="28"></iconify-icon>
+                            <div class="p-4 sm:p-5 pl-5 sm:pl-6">
+                                <div class="flex items-start gap-3 sm:gap-4">
+                                    <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center group-hover:bg-indigo-100 group-hover:scale-110 transition-all duration-300 shrink-0">
+                                        <iconify-icon icon="solar:settings-bold-duotone" class="text-indigo-600" width="24"></iconify-icon>
                                     </div>
-                                    <div class="flex-1">
-                                        <div class="flex items-center justify-between mb-1">
-                                            <h3 class="font-bold text-slate-900 text-lg">Maschinen, Anlagen & BGA</h3>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+                                            <h3 class="font-bold text-slate-900 text-base sm:text-lg">Maschinen & Anlagen</h3>
                                             <span class="px-2.5 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg">Bis 45%</span>
                                         </div>
                                         <p class="text-sm text-slate-500 leading-relaxed mb-3">
                                             Anschaffung von neuen Maschinen, Anlagen und technischer Einrichtung.
                                         </p>
-                                        <div class="flex items-center gap-4 text-xs">
+                                        <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-xs">
                                             <span class="flex items-center gap-1.5 text-emerald-600">
                                                 <iconify-icon icon="solar:check-circle-bold" width="14"></iconify-icon>
                                                 Neuanschaffung
@@ -461,19 +461,19 @@
                             <!-- Decorative circles -->
                             <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-emerald-200/30 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
 
-                            <div class="relative p-6">
-                                <div class="flex items-start gap-4">
-                                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-300/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                                        <iconify-icon icon="solar:sun-bold-duotone" class="text-white animate-pulse-slow" width="32"></iconify-icon>
+                            <div class="relative p-4 sm:p-6">
+                                <div class="flex items-start gap-3 sm:gap-4">
+                                    <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-300/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shrink-0">
+                                        <iconify-icon icon="solar:sun-bold-duotone" class="text-white animate-pulse-slow" width="28"></iconify-icon>
                                     </div>
-                                    <div class="flex-1">
-                                        <h3 class="font-bold text-slate-900 text-xl mb-2">Nachhaltigkeit & Energie</h3>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-bold text-slate-900 text-lg sm:text-xl mb-2">Nachhaltigkeit & Energie</h3>
                                         <p class="text-sm text-slate-600 leading-relaxed mb-4">
                                             Photovoltaikanlagen, Speicher, Wärmepumpen und Investitionen zur CO2-Einsparung werden besonders hoch gefördert.
                                         </p>
 
                                         <!-- Energy items with icons -->
-                                        <div class="grid grid-cols-2 gap-2">
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                             <div class="flex items-center gap-2 px-3 py-2 bg-white/70 rounded-lg border border-emerald-100">
                                                 <iconify-icon icon="solar:solar-power-bold-duotone" class="text-emerald-600" width="18"></iconify-icon>
                                                 <span class="text-xs font-medium text-slate-700">Photovoltaik</span>
