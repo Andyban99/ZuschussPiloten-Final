@@ -1517,11 +1517,4 @@ body {
     text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
 }
 
-/* Progress bar shine */
-#grantProgressBar::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    animation: shine 2s ease-in-out infinite;
-}
+/* Progress bar (shine removed) */
