@@ -1,10 +1,28 @@
 /**
  * Zuschuss Piloten - Main JavaScript
  * ===================================
+ * Mit Sicherheitsmaßnahmen gegen Bots und Spam
  */
 
 (function() {
     'use strict';
+
+    /**
+     * Security: Formular-Ladezeit speichern (Bot-Erkennung)
+     */
+    const formLoadTime = Date.now();
+
+    /**
+     * Security: Einfachen Form-Token generieren
+     */
+    function generateFormToken() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let token = '';
+        for (let i = 0; i < 32; i++) {
+            token += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return token;
+    }
 
     /**
      * DOM Elements
@@ -94,11 +112,22 @@
                 const formData = new FormData(this);
                 const data = Object.fromEntries(formData);
 
+                // Sicherheitsfelder hinzufügen (Bot-Erkennung)
+                data._form_token = generateFormToken();
+                data._timestamp = formLoadTime;
+
+                // Honeypot-Felder (sollten leer sein bei echten Nutzern)
+                // Diese werden im HTML als versteckte Felder hinzugefügt
+                // und hier sichergestellt, dass sie im Request sind
+                if (!data.hasOwnProperty('website')) data.website = '';
+                if (!data.hasOwnProperty('url')) data.url = '';
+
                 try {
                     const response = await fetch('backend/submit.php', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
                         },
                         body: JSON.stringify(data)
                     });

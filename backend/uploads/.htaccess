@@ -1,5 +1,24 @@
-# Direkten Zugriff auf Dateien verhindern
-<FilesMatch ".*">
-    Order Allow,Deny
+# ================================================
+# UPLOAD DIRECTORY SECURITY
+# ================================================
+
+# Prevent PHP execution
+<FilesMatch "\.php$">
+    Order allow,deny
     Deny from all
+</FilesMatch>
+
+# Prevent script execution
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|cgi|pl|asp|aspx|shtml|shtm|htaccess|htpasswd|ini|log|sh|bat)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Disable directory listing
+Options -Indexes
+
+# Only allow specific file types
+<FilesMatch "^.*\.(xlsx|xls|csv|pdf|doc|docx)$">
+    Order allow,deny
+    Allow from all
 </FilesMatch>

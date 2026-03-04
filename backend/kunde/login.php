@@ -1,9 +1,12 @@
 <?php
 /**
- * Zuschuss Piloten - Kunden Login & Registrierung
+ * Zuschuss Piloten - Kunden Login & Registrierung (Gesichert)
  */
 
 require_once 'auth.php';
+
+// Security Headers
+setSecurityHeaders();
 
 // Wenn bereits eingeloggt, zum Dashboard weiterleiten
 if (isKundeLoggedIn()) {
@@ -13,56 +16,108 @@ if (isKundeLoggedIn()) {
 
 $error = '';
 $success = '';
+$lockoutMessage = '';
 $mode = $_GET['mode'] ?? 'login'; // login oder register
+
+// CSRF-Token generieren
+$csrfToken = generateCSRFToken();
+
+// Brute-Force-Schutz prüfen
+$clientIP = getClientIP();
+$loginCheck = checkLoginAttempts($clientIP . '_kunde');
+
+if (!$loginCheck['allowed']) {
+    $minutes = ceil($loginCheck['remaining'] / 60);
+    $lockoutMessage = "Zu viele fehlgeschlagene Anmeldeversuche. Bitte warten Sie {$minutes} Minute(n).";
+}
 
 // Timeout-Meldung
 if (isset($_GET['timeout'])) {
     $error = 'Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.';
 }
 
-// Login verarbeiten
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    if ($_POST['action'] === 'login') {
-        $email = trim($_POST['email'] ?? '');
+// Login/Registrierung verarbeiten
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && empty($lockoutMessage)) {
+    // CSRF-Token validieren
+    if (!validateCSRFToken($_POST[CSRF_TOKEN_NAME] ?? '')) {
+        $error = 'Ungültige Anfrage. Bitte laden Sie die Seite neu.';
+        logSecurityEvent('csrf_validation_failed', ['ip' => $clientIP, 'page' => 'kunde_login']);
+    }
+    // Honeypot prüfen
+    elseif (!empty($_POST['website'])) {
+        logSecurityEvent('honeypot_triggered', ['ip' => $clientIP, 'page' => 'kunde_login']);
+        sleep(2);
+        header('Location: login.php');
+        exit;
+    }
+    elseif ($_POST['action'] === 'login') {
+        $email = sanitizeInput($_POST['email'] ?? '', 'email');
         $password = $_POST['password'] ?? '';
 
         if (empty($email) || empty($password)) {
             $error = 'Bitte füllen Sie alle Felder aus.';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
         } elseif (doKundeLogin($email, $password)) {
+            recordLoginAttempt($clientIP . '_kunde', true);
+            logSecurityEvent('kunde_login_success', ['email' => $email, 'ip' => $clientIP]);
+            session_regenerate_id(true);
             header('Location: dashboard.php');
             exit;
         } else {
+            recordLoginAttempt($clientIP . '_kunde', false);
+            logSecurityEvent('kunde_login_failed', ['email' => $email, 'ip' => $clientIP]);
             $error = 'Ungültige E-Mail-Adresse oder Passwort.';
+            usleep(random_int(100000, 500000));
         }
     } elseif ($_POST['action'] === 'register') {
-        $email = trim($_POST['email'] ?? '');
+        $email = sanitizeInput($_POST['email'] ?? '', 'email');
         $password = $_POST['password'] ?? '';
         $password_confirm = $_POST['password_confirm'] ?? '';
-        $vorname = trim($_POST['vorname'] ?? '');
-        $nachname = trim($_POST['nachname'] ?? '');
+        $vorname = sanitizeInput($_POST['vorname'] ?? '', 'string');
+        $nachname = sanitizeInput($_POST['nachname'] ?? '', 'string');
 
+        // Validierung
         if (empty($email) || empty($password) || empty($vorname) || empty($nachname)) {
             $error = 'Bitte füllen Sie alle Pflichtfelder aus.';
             $mode = 'register';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
             $mode = 'register';
+        } elseif (strlen($email) > 255) {
+            $error = 'E-Mail-Adresse ist zu lang.';
+            $mode = 'register';
+        } elseif (strlen($vorname) > 100 || strlen($nachname) > 100) {
+            $error = 'Name ist zu lang (max. 100 Zeichen).';
+            $mode = 'register';
         } elseif (strlen($password) < 8) {
             $error = 'Das Passwort muss mindestens 8 Zeichen lang sein.';
+            $mode = 'register';
+        } elseif (strlen($password) > 200) {
+            $error = 'Das Passwort ist zu lang.';
             $mode = 'register';
         } elseif ($password !== $password_confirm) {
             $error = 'Die Passwörter stimmen nicht überein.';
             $mode = 'register';
+        } elseif (!isset($_POST['datenschutz'])) {
+            $error = 'Bitte stimmen Sie den Datenschutzbestimmungen zu.';
+            $mode = 'register';
         } else {
-            $result = doKundeRegister($email, $password, $vorname, $nachname);
-            if ($result['success']) {
-                // Direkt einloggen
-                doKundeLogin($email, $password);
-                header('Location: dashboard.php?welcome=1');
-                exit;
-            } else {
-                $error = $result['error'];
+            // Passwort-Stärke prüfen
+            if (!preg_match('/[A-Za-z]/', $password) || !preg_match('/[0-9]/', $password)) {
+                $error = 'Das Passwort muss Buchstaben und Zahlen enthalten.';
                 $mode = 'register';
+            } else {
+                $result = doKundeRegister($email, $password, $vorname, $nachname);
+                if ($result['success']) {
+                    logSecurityEvent('kunde_register_success', ['email' => $email, 'ip' => $clientIP]);
+                    doKundeLogin($email, $password);
+                    header('Location: dashboard.php?welcome=1');
+                    exit;
+                } else {
+                    $error = $result['error'];
+                    $mode = 'register';
+                }
             }
         }
     }
@@ -73,6 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Kunden Login - Zuschuss Piloten</title>
     <link rel="icon" type="image/svg+xml" href="../../assets/Icon Black White BG.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -126,6 +182,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             </div>
 
             <div class="p-8">
+                <?php if ($lockoutMessage): ?>
+                <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+                    <iconify-icon icon="solar:shield-warning-bold" class="text-red-500 text-xl flex-shrink-0 mt-0.5"></iconify-icon>
+                    <span class="text-red-700 text-sm"><?= e($lockoutMessage) ?></span>
+                </div>
+                <?php endif; ?>
+
                 <?php if ($error): ?>
                 <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
                     <iconify-icon icon="solar:danger-triangle-bold" class="text-red-500 text-xl flex-shrink-0 mt-0.5"></iconify-icon>
@@ -142,14 +205,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
                 <?php if ($mode === 'login'): ?>
                 <!-- Login Form -->
-                <form method="POST" class="space-y-5">
+                <form method="POST" class="space-y-5" <?= $lockoutMessage ? 'style="opacity: 0.5; pointer-events: none;"' : '' ?>>
                     <input type="hidden" name="action" value="login">
+                    <?= csrfField() ?>
+
+                    <!-- Honeypot -->
+                    <div style="position: absolute; left: -9999px;">
+                        <input type="text" name="website" tabindex="-1" autocomplete="off">
+                    </div>
 
                     <div>
                         <label for="email" class="block text-sm font-medium text-slate-700 mb-2">E-Mail-Adresse</label>
                         <div class="relative">
                             <iconify-icon icon="solar:letter-bold" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></iconify-icon>
                             <input type="email" id="email" name="email" required
+                                   autocomplete="email"
                                    class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                    placeholder="ihre@email.de">
                         </div>
@@ -160,6 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         <div class="relative">
                             <iconify-icon icon="solar:lock-password-bold" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></iconify-icon>
                             <input type="password" id="password" name="password" required
+                                   autocomplete="current-password"
                                    class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                    placeholder="Ihr Passwort">
                         </div>
@@ -174,21 +245,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
                 <?php else: ?>
                 <!-- Register Form -->
-                <form method="POST" class="space-y-5">
+                <form method="POST" class="space-y-5" <?= $lockoutMessage ? 'style="opacity: 0.5; pointer-events: none;"' : '' ?>>
                     <input type="hidden" name="action" value="register">
+                    <?= csrfField() ?>
+
+                    <!-- Honeypot -->
+                    <div style="position: absolute; left: -9999px;">
+                        <input type="text" name="website" tabindex="-1" autocomplete="off">
+                    </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label for="vorname" class="block text-sm font-medium text-slate-700 mb-2">Vorname *</label>
                             <input type="text" id="vorname" name="vorname" required
+                                   maxlength="100"
                                    value="<?= e($_POST['vorname'] ?? '') ?>"
+                                   autocomplete="given-name"
                                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                    placeholder="Max">
                         </div>
                         <div>
                             <label for="nachname" class="block text-sm font-medium text-slate-700 mb-2">Nachname *</label>
                             <input type="text" id="nachname" name="nachname" required
+                                   maxlength="100"
                                    value="<?= e($_POST['nachname'] ?? '') ?>"
+                                   autocomplete="family-name"
                                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                    placeholder="Mustermann">
                         </div>
@@ -199,17 +280,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         <div class="relative">
                             <iconify-icon icon="solar:letter-bold" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></iconify-icon>
                             <input type="email" id="reg_email" name="email" required
+                                   maxlength="255"
                                    value="<?= e($_POST['email'] ?? '') ?>"
+                                   autocomplete="email"
                                    class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                    placeholder="ihre@email.de">
                         </div>
                     </div>
 
                     <div>
-                        <label for="reg_password" class="block text-sm font-medium text-slate-700 mb-2">Passwort * <span class="text-slate-400 font-normal">(min. 8 Zeichen)</span></label>
+                        <label for="reg_password" class="block text-sm font-medium text-slate-700 mb-2">
+                            Passwort * <span class="text-slate-400 font-normal">(min. 8 Zeichen, Buchstaben & Zahlen)</span>
+                        </label>
                         <div class="relative">
                             <iconify-icon icon="solar:lock-password-bold" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></iconify-icon>
-                            <input type="password" id="reg_password" name="password" required minlength="8"
+                            <input type="password" id="reg_password" name="password" required
+                                   minlength="8" maxlength="200"
+                                   autocomplete="new-password"
                                    class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                    placeholder="Sicheres Passwort">
                         </div>
@@ -220,6 +307,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         <div class="relative">
                             <iconify-icon icon="solar:lock-password-bold" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></iconify-icon>
                             <input type="password" id="password_confirm" name="password_confirm" required
+                                   autocomplete="new-password"
                                    class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                    placeholder="Passwort wiederholen">
                         </div>

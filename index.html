@@ -127,9 +127,92 @@
                     <iconify-icon icon="solar:arrow-right-linear"
                         class="group-hover:translate-x-0.5 transition-transform"></iconify-icon>
                 </a>
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors">
+                    <iconify-icon id="menu-icon-open" icon="solar:hamburger-menu-linear" width="24" class="text-slate-700"></iconify-icon>
+                    <iconify-icon id="menu-icon-close" icon="solar:close-circle-linear" width="24" class="text-slate-700 hidden"></iconify-icon>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white/95 backdrop-blur-lg border-t border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 py-4">
+                <!-- Leistungen Section -->
+                <div class="mb-4">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-3">Leistungen</p>
+                    <div class="space-y-1">
+                        <a href="investitionsfoerderung.html" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-blue-50 transition-colors">
+                            <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+                                <iconify-icon icon="solar:buildings-2-bold-duotone" width="20"></iconify-icon>
+                            </div>
+                            <div>
+                                <div class="font-medium text-slate-900">Investitionsförderung</div>
+                                <div class="text-xs text-slate-500">Maschinen, Anlagen, Gebäude</div>
+                            </div>
+                        </a>
+                        <a href="digitalisierung.html" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-indigo-50 transition-colors">
+                            <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                                <iconify-icon icon="solar:monitor-smartphone-bold-duotone" width="20"></iconify-icon>
+                            </div>
+                            <div>
+                                <div class="font-medium text-slate-900">Digitalisierung/IT</div>
+                                <div class="text-xs text-slate-500">Software, Cloud, Prozesse</div>
+                            </div>
+                        </a>
+                        <a href="personalfoerderung.html" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-emerald-50 transition-colors">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                                <iconify-icon icon="solar:users-group-rounded-bold-duotone" width="20"></iconify-icon>
+                            </div>
+                            <div>
+                                <div class="font-medium text-slate-900">Personalförderung</div>
+                                <div class="text-xs text-slate-500">Lohnzuschüsse, Weiterbildung</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="border-t border-slate-200 my-4"></div>
+
+                <!-- Navigation Links -->
+                <div class="space-y-1">
+                    <a href="#kompetenzen" class="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors font-medium">Förderübersicht</a>
+                    <a href="#ueber-uns" class="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors font-medium">Über uns</a>
+                    <a href="#warum-wir" class="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors font-medium">Was uns ausmacht</a>
+                </div>
+
+                <!-- Divider -->
+                <div class="border-t border-slate-200 my-4"></div>
+
+                <!-- Kundenportal -->
+                <a href="backend/kunde/login.php" id="kunden-login-link-mobile" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors font-medium">
+                    <iconify-icon icon="solar:user-circle-linear" width="20"></iconify-icon>
+                    <span>Kundenportal</span>
+                </a>
             </div>
         </div>
     </nav>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            const iconOpen = document.getElementById('menu-icon-open');
+            const iconClose = document.getElementById('menu-icon-close');
+            menu.classList.toggle('hidden');
+            iconOpen.classList.toggle('hidden');
+            iconClose.classList.toggle('hidden');
+        });
+        // Close menu when clicking on anchor links
+        document.querySelectorAll('#mobile-menu a[href^="#"]').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.add('hidden');
+                document.getElementById('menu-icon-open').classList.remove('hidden');
+                document.getElementById('menu-icon-close').classList.add('hidden');
+            });
+        });
+    </script>
 
     <!-- ========================================
          HERO SECTION
@@ -1371,6 +1454,12 @@
                                     placeholder="Beschreiben Sie kurz Ihr Investitionsvorhaben..."
                                     class="form-input w-full pl-11 pr-4 py-3.5 resize-none"></textarea>
                             </div>
+                        </div>
+
+                        <!-- Honeypot Felder (Bot-Schutz - für Nutzer unsichtbar) -->
+                        <div class="absolute -left-[9999px]" aria-hidden="true">
+                            <input type="text" name="website" tabindex="-1" autocomplete="off">
+                            <input type="text" name="url" tabindex="-1" autocomplete="off">
                         </div>
 
                         <!-- Submit Button -->

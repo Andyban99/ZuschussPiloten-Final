@@ -1,11 +1,15 @@
 <?php
 /**
- * Zuschuss Piloten - Admin Login
+ * Zuschuss Piloten - Admin Login (Gesichert)
  */
 
 require_once 'auth.php';
 
+// Security Headers
+setSecurityHeaders();
+
 $error = '';
+$lockoutMessage = '';
 
 // Bereits eingeloggt?
 if (isLoggedIn()) {
@@ -13,16 +17,54 @@ if (isLoggedIn()) {
     exit;
 }
 
-// Login-Versuch
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
+// CSRF-Token generieren
+$csrfToken = generateCSRFToken();
 
-    if (doLogin($username, $password)) {
-        header('Location: index.php');
-        exit;
+// Brute-Force-Schutz prüfen
+$clientIP = getClientIP();
+$loginCheck = checkLoginAttempts($clientIP);
+
+if (!$loginCheck['allowed']) {
+    $minutes = ceil($loginCheck['remaining'] / 60);
+    $lockoutMessage = "Zu viele fehlgeschlagene Anmeldeversuche. Bitte warten Sie {$minutes} Minute(n).";
+}
+
+// Login-Versuch
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($lockoutMessage)) {
+    // CSRF-Token validieren
+    if (!validateCSRFToken($_POST[CSRF_TOKEN_NAME] ?? '')) {
+        $error = 'Ungültige Anfrage. Bitte laden Sie die Seite neu.';
+        logSecurityEvent('csrf_validation_failed', ['ip' => $clientIP, 'page' => 'admin_login']);
     } else {
-        $error = 'Ungültige Anmeldedaten';
+        $username = sanitizeInput($_POST['username'] ?? '', 'string');
+        $password = $_POST['password'] ?? '';
+
+        // Honeypot prüfen
+        if (!empty($_POST['website'])) {
+            logSecurityEvent('honeypot_triggered', ['ip' => $clientIP, 'page' => 'admin_login']);
+            // Still redirect to prevent information leakage
+            sleep(2);
+            header('Location: login.php');
+            exit;
+        }
+
+        if (doLogin($username, $password)) {
+            recordLoginAttempt($clientIP, true);
+            logSecurityEvent('admin_login_success', ['user' => $username, 'ip' => $clientIP]);
+
+            // Session-ID regenerieren nach erfolgreichem Login
+            session_regenerate_id(true);
+
+            header('Location: index.php');
+            exit;
+        } else {
+            recordLoginAttempt($clientIP, false);
+            logSecurityEvent('admin_login_failed', ['user' => $username, 'ip' => $clientIP]);
+            $error = 'Ungültige Anmeldedaten';
+
+            // Verzögerung um Timing-Attacken zu erschweren
+            usleep(random_int(100000, 500000));
+        }
     }
 }
 
@@ -33,6 +75,7 @@ $timeout = isset($_GET['timeout']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Admin Login - Zuschuss Piloten</title>
     <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -73,6 +116,13 @@ $timeout = isset($_GET['timeout']);
             <h1 class="text-2xl font-bold text-slate-900 mb-2">Willkommen zurück</h1>
             <p class="text-slate-500 mb-8">Melden Sie sich an, um fortzufahren</p>
 
+            <?php if ($lockoutMessage): ?>
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-red-700">
+                <iconify-icon icon="solar:shield-warning-bold" width="20"></iconify-icon>
+                <span class="text-sm font-medium"><?= e($lockoutMessage) ?></span>
+            </div>
+            <?php endif; ?>
+
             <?php if ($error): ?>
             <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-red-700">
                 <iconify-icon icon="solar:danger-triangle-bold" width="20"></iconify-icon>
@@ -87,14 +137,22 @@ $timeout = isset($_GET['timeout']);
             </div>
             <?php endif; ?>
 
-            <form method="POST" class="space-y-5">
+            <form method="POST" class="space-y-5" <?= $lockoutMessage ? 'style="opacity: 0.5; pointer-events: none;"' : '' ?>>
+                <?= csrfField() ?>
+
+                <!-- Honeypot field (hidden from users, bots will fill it) -->
+                <div style="position: absolute; left: -9999px;">
+                    <input type="text" name="website" tabindex="-1" autocomplete="off">
+                </div>
+
                 <div>
                     <label for="username" class="block text-sm font-semibold text-slate-700 mb-2">Benutzername</label>
                     <div class="relative">
                         <iconify-icon icon="solar:user-bold" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" width="20"></iconify-icon>
                         <input type="text" id="username" name="username" required autofocus
+                               autocomplete="username"
                                class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                               placeholder="admin">
+                               placeholder="Benutzername">
                     </div>
                 </div>
 
@@ -103,6 +161,7 @@ $timeout = isset($_GET['timeout']);
                     <div class="relative">
                         <iconify-icon icon="solar:lock-password-bold" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" width="20"></iconify-icon>
                         <input type="password" id="password" name="password" required
+                               autocomplete="current-password"
                                class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                placeholder="••••••••">
                     </div>

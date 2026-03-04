@@ -1,13 +1,30 @@
-# Zuschuss Piloten - Backend Security
+# ================================================
+# BACKEND SECURITY
+# ================================================
 
-# Deny access to config file
+# Protect sensitive files
+<FilesMatch "^(config|\.env|\.git)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect config.php specifically
 <Files "config.php">
-    Order Allow,Deny
+    Order allow,deny
     Deny from all
 </Files>
 
-# Deny access to SQL file
-<Files "database.sql">
-    Order Allow,Deny
-    Deny from all
-</Files>
+# Allow PHP execution (needed for backend)
+<FilesMatch "\.php$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
+# Disable directory listing
+Options -Indexes
+
+# Security Headers for API responses
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+</IfModule>
