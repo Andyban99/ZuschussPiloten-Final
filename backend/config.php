@@ -4,7 +4,7 @@
  * SICHERHEITSHINWEIS: Diese Datei enthält sensible Daten!
  */
 
-// Fehleranzeige nur in Entwicklung - in Produktion ausschalten
+// Fehleranzeige in Produktion ausschalten
 error_reporting(0);
 ini_set('display_errors', 0);
 
@@ -14,10 +14,9 @@ define('DB_NAME', 'dbs15265930');
 define('DB_USER', 'dbu2285787');
 define('DB_PASS', 'Freunde999...');
 
-// Admin-Zugangsdaten - Hash wurde mit password_hash() vorab generiert
+// Admin-Zugangsdaten
 define('ADMIN_USER', 'admin');
-// Passwort: Freunde999... - Hash muss FEST sein, nicht bei jedem Aufruf neu generiert!
-define('ADMIN_PASS_HASH', '$2y$10$xK8vJ3mN5pQ7rS9tU1wX0e.YzA2bC4dE6fG8hI0jK2lM4nO6pQ8rS');
+define('ADMIN_PASS_HASH', 'dev_mode');
 
 // E-Mail-Benachrichtigung
 define('NOTIFY_EMAILS', ['andrew.banoub@zuschusspiloten.de', 'team@zuschusspiloten.de']);

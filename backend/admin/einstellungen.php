@@ -65,6 +65,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     <iconify-icon icon="solar:users-group-rounded-bold" width="20"></iconify-icon>
                     Kundendaten
                 </a>
+                <a href="statistiken.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-all">
+                    <iconify-icon icon="solar:chart-2-bold" width="20"></iconify-icon>
+                    Statistiken
+                </a>
                 <a href="einstellungen.php" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 text-white font-medium">
                     <iconify-icon icon="solar:settings-bold" width="20"></iconify-icon>
                     Einstellungen

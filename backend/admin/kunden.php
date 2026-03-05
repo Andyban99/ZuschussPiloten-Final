@@ -91,6 +91,10 @@ $kunden = $stmt->fetchAll();
                     <span class="ml-auto bg-emerald-500 text-white text-xs font-bold px-2 py-0.5 rounded-full"><?= $stats['gesamt'] ?></span>
                     <?php endif; ?>
                 </a>
+                <a href="statistiken.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-all">
+                    <iconify-icon icon="solar:chart-2-bold" width="20"></iconify-icon>
+                    Statistiken
+                </a>
                 <a href="export.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-all">
                     <iconify-icon icon="solar:download-bold" width="20"></iconify-icon>
                     CSV Export

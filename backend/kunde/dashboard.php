@@ -689,7 +689,7 @@ while (count($investitionsgueter) < 5) {
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <div>
-                                <label for="elster_steuernummer" class="block text-sm font-medium text-slate-700 mb-2">Elster-Steuernummer</label>
+                                <label for="elster_steuernummer" class="block text-sm font-medium text-slate-700 mb-2">Steuernummer</label>
                                 <input type="text" id="elster_steuernummer" name="elster_steuernummer"
                                        value="<?= e($kunde['elster_steuernummer'] ?? '') ?>"
                                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-mono"

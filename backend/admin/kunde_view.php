@@ -105,6 +105,10 @@ if (!empty($kunde['investitionsgueter'])) {
                     <iconify-icon icon="solar:users-group-rounded-bold" width="20"></iconify-icon>
                     Kundendaten
                 </a>
+                <a href="statistiken.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-all">
+                    <iconify-icon icon="solar:chart-2-bold" width="20"></iconify-icon>
+                    Statistiken
+                </a>
                 <a href="einstellungen.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-all">
                     <iconify-icon icon="solar:settings-bold" width="20"></iconify-icon>
                     Einstellungen
@@ -319,7 +323,7 @@ if (!empty($kunde['investitionsgueter'])) {
                         <div class="p-6">
                             <div class="grid grid-cols-2 gap-6">
                                 <div>
-                                    <span class="text-xs text-slate-500 uppercase tracking-wide">Elster-Steuernummer</span>
+                                    <span class="text-xs text-slate-500 uppercase tracking-wide">Steuernummer</span>
                                     <p class="mt-1 text-slate-900 font-mono"><?= e($kunde['elster_steuernummer'] ?: '-') ?></p>
                                 </div>
                                 <div>
