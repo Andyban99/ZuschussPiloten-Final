@@ -49,14 +49,21 @@ if (!in_array($type, ['pageview', 'event'])) {
 try {
     $db = getDB();
 
-    // Anonymen Session-Hash generieren (ohne IP-Speicherung!)
-    // Basiert auf: User-Agent + Bildschirmgröße + Sprache + Tagesdatum
-    // Rotiert täglich für zusätzliche Anonymität
-    $sessionData = implode('|', [
+    // ===== BESUCHER-HASH (stabil, identifiziert Person über längere Zeit) =====
+    // Basiert auf: gehashte IP + User-Agent + Bildschirmgröße
+    // IP wird NICHT gespeichert, nur zur Hash-Generierung genutzt!
+    $ip = getClientIP();
+    $besucherData = implode('|', [
+        hash('sha256', $ip . 'zp_salt_2024'), // IP wird gehasht, nicht gespeichert
         $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
         $data['screen_width'] ?? '0',
-        $data['screen_height'] ?? '0',
-        $data['language'] ?? 'de',
+        $data['screen_height'] ?? '0'
+    ]);
+    $besucherHash = hash('sha256', $besucherData);
+
+    // ===== SESSION-HASH (rotiert täglich, für Tagesstatistiken) =====
+    $sessionData = implode('|', [
+        $besucherHash,
         date('Y-m-d') // Tägliche Rotation
     ]);
     $sessionHash = hash('sha256', $sessionData);
@@ -65,15 +72,18 @@ try {
     $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
     $deviceInfo = parseUserAgent($userAgent);
 
+    // Standort ermitteln (IP wird NICHT gespeichert, nur zur Ermittlung genutzt)
+    $locationInfo = getLocationFromIP();
+
     if ($type === 'pageview') {
         // Seitenaufruf speichern
         $stmt = $db->prepare("
             INSERT INTO tracking_pageviews
-            (session_hash, seite, referrer, referrer_domain, geraetetyp, browser, browser_version,
-             os, os_version, bildschirmbreite, bildschirmhoehe, sprache)
+            (besucher_hash, session_hash, seite, referrer, referrer_domain, geraetetyp, browser, browser_version,
+             os, os_version, bildschirmbreite, bildschirmhoehe, sprache, land, region, stadt)
             VALUES
-            (:session_hash, :seite, :referrer, :referrer_domain, :geraetetyp, :browser, :browser_version,
-             :os, :os_version, :bildschirmbreite, :bildschirmhoehe, :sprache)
+            (:besucher_hash, :session_hash, :seite, :referrer, :referrer_domain, :geraetetyp, :browser, :browser_version,
+             :os, :os_version, :bildschirmbreite, :bildschirmhoehe, :sprache, :land, :region, :stadt)
         ");
 
         $seite = sanitizeInput(substr($data['page'] ?? '/', 0, 255));
@@ -81,6 +91,7 @@ try {
         $referrerDomain = extractDomain($referrer);
 
         $stmt->execute([
+            ':besucher_hash' => $besucherHash,
             ':session_hash' => $sessionHash,
             ':seite' => $seite,
             ':referrer' => $referrer ?: null,
@@ -92,11 +103,19 @@ try {
             ':os_version' => $deviceInfo['os_version'],
             ':bildschirmbreite' => intval($data['screen_width'] ?? 0) ?: null,
             ':bildschirmhoehe' => intval($data['screen_height'] ?? 0) ?: null,
-            ':sprache' => sanitizeInput(substr($data['language'] ?? '', 0, 10)) ?: null
+            ':sprache' => sanitizeInput(substr($data['language'] ?? '', 0, 10)) ?: null,
+            ':land' => $locationInfo['land'],
+            ':region' => $locationInfo['region'],
+            ':stadt' => $locationInfo['stadt']
         ]);
 
         // Tagesstatistiken aktualisieren
-        updateDailyStats($db, $seite, $sessionHash, $deviceInfo['device'], $referrerDomain, $deviceInfo['browser']);
+        updateDailyStats($db, $seite, $besucherHash, $sessionHash, $deviceInfo['device'], $referrerDomain, $deviceInfo['browser']);
+
+        // Standort-Statistiken aktualisieren
+        if ($locationInfo['land']) {
+            updateLocationStats($db, $locationInfo['land'], $locationInfo['region']);
+        }
 
     } elseif ($type === 'event') {
         // Event speichern
@@ -234,19 +253,23 @@ function extractDomain($url) {
 /**
  * Tagesstatistiken aktualisieren
  */
-function updateDailyStats($db, $seite, $sessionHash, $device, $referrerDomain, $browser) {
+function updateDailyStats($db, $seite, $besucherHash, $sessionHash, $device, $referrerDomain, $browser) {
     $today = date('Y-m-d');
 
-    // Prüfen ob dieser Session-Hash heute schon gezählt wurde
+    // Prüfen ob dieser BESUCHER (Person) heute diese Seite schon besucht hat
     $stmt = $db->prepare("
         SELECT COUNT(*) FROM tracking_pageviews
-        WHERE session_hash = :hash AND seite = :seite AND DATE(erstellt_am) = :today
+        WHERE besucher_hash = :hash AND seite = :seite AND DATE(erstellt_am) = :today
     ");
-    $stmt->execute([':hash' => $sessionHash, ':seite' => $seite, ':today' => $today]);
-    $isNewVisitor = $stmt->fetchColumn() <= 1;
+    $stmt->execute([':hash' => $besucherHash, ':seite' => $seite, ':today' => $today]);
+    $isNewVisitorToday = $stmt->fetchColumn() <= 1;
 
-    // Tagesstatistik aktualisieren (INSERT ON DUPLICATE KEY UPDATE)
-    $deviceColumn = $device . '_besuche';
+    // SICHERHEIT: Whitelist für erlaubte Spalten (SQL Injection Schutz)
+    $validDeviceColumns = ['desktop_besuche', 'mobile_besuche', 'tablet_besuche'];
+    $deviceColumn = 'desktop_besuche'; // Default
+    if (in_array($device . '_besuche', $validDeviceColumns)) {
+        $deviceColumn = $device . '_besuche';
+    }
 
     $sql = "
         INSERT INTO tracking_daily_stats
@@ -262,8 +285,8 @@ function updateDailyStats($db, $seite, $sessionHash, $device, $referrerDomain, $
     $stmt->execute([
         ':datum' => $today,
         ':seite' => $seite,
-        ':unique' => $isNewVisitor ? 1 : 0,
-        ':unique_update' => $isNewVisitor ? 1 : 0
+        ':unique' => $isNewVisitorToday ? 1 : 0,
+        ':unique_update' => $isNewVisitorToday ? 1 : 0
     ]);
 
     // Referrer-Statistik aktualisieren
@@ -292,6 +315,12 @@ function updateDailyStats($db, $seite, $sessionHash, $device, $referrerDomain, $
  */
 function updateEventStats($db, $seite, $column) {
     $today = date('Y-m-d');
+
+    // SICHERHEIT: Whitelist für erlaubte Spalten (SQL Injection Schutz)
+    $validColumns = ['cta_klicks', 'telefon_klicks', 'email_klicks'];
+    if (!in_array($column, $validColumns)) {
+        return; // Ungültige Spalte ignorieren
+    }
 
     $sql = "
         INSERT INTO tracking_daily_stats (datum, seite, {$column})
@@ -325,5 +354,73 @@ function updateScrollStats($db, $seite, $depth) {
         ':depth' => $depth,
         ':depth_update' => $depth,
         ':depth_update2' => $depth
+    ]);
+}
+
+/**
+ * Standort aus IP ermitteln (IP wird NICHT gespeichert!)
+ * Nutzt ip-api.com (kostenlos, keine Registrierung)
+ */
+function getLocationFromIP() {
+    $result = [
+        'land' => null,
+        'region' => null,
+        'stadt' => null
+    ];
+
+    $ip = getClientIP();
+
+    // Localhost/private IPs ignorieren
+    if (in_array($ip, ['127.0.0.1', '::1']) || preg_match('/^(10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.)/', $ip)) {
+        return $result;
+    }
+
+    // ip-api.com kostenlos nur über HTTP (HTTPS erfordert Pro-Version)
+    $apiUrl = "http://ip-api.com/json/{$ip}?fields=status,country,regionName,city&lang=de";
+
+    // cURL verwenden (zuverlässiger als file_get_contents)
+    if (function_exists('curl_init')) {
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $apiUrl,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 2,
+            CURLOPT_CONNECTTIMEOUT => 2,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_USERAGENT => 'ZuschussPiloten-Tracker/1.0'
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($response && $httpCode === 200) {
+            $data = json_decode($response, true);
+            if ($data && isset($data['status']) && $data['status'] === 'success') {
+                $result['land'] = $data['country'] ?? null;
+                $result['region'] = $data['regionName'] ?? null;
+                $result['stadt'] = $data['city'] ?? null;
+            }
+        }
+    }
+
+    return $result;
+}
+
+/**
+ * Standort-Statistiken aktualisieren
+ */
+function updateLocationStats($db, $land, $region) {
+    $today = date('Y-m-d');
+
+    $stmt = $db->prepare("
+        INSERT INTO tracking_location_stats (datum, land, region, besuche)
+        VALUES (:datum, :land, :region, 1)
+        ON DUPLICATE KEY UPDATE besuche = besuche + 1
+    ");
+    $stmt->execute([
+        ':datum' => $today,
+        ':land' => $land,
+        ':region' => $region
     ]);
 }
