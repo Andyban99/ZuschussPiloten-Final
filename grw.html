@@ -174,12 +174,12 @@
         }
 
         .c-gebiet {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
+            background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
         }
         .d-gebiet {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
         }
         .teilweise {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
@@ -507,7 +507,11 @@
                     <h2 class="anim text-2xl md:text-4xl lg:text-5xl font-bold text-center mb-4">
                         <span class="gradient-text-static">Fördergebiete</span> 2022–2027
                     </h2>
-                    <p class="anim text-center text-slate-500 mb-8 md:mb-12">C-Gebiete (hohe Förderung) und D-Gebiete (mittlere Förderung)</p>
+                    <p class="anim text-center text-slate-500 mb-3">C-Gebiete (hohe Förderung) und D-Gebiete (mittlere Förderung)</p>
+                    <p class="anim text-center text-slate-400 text-sm mb-8 md:mb-10 max-w-2xl mx-auto">
+                        <iconify-icon icon="solar:info-circle-linear" width="16" class="inline-block mr-1 align-text-bottom text-blue-400"></iconify-icon>
+                        Liegt Ihr Standort außerhalb eines GRW-Gebiets? Dann kommt ein <span class="text-blue-400 font-medium">EFRE-Antrag</span> in Frage – ein sehr ähnliches Förderprogramm.
+                    </p>
 
                     <div class="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12">
                         <!-- Official GRW Map -->
@@ -527,45 +531,41 @@
                         </div>
 
                         <!-- Legend -->
-                        <div class="anim space-y-4">
-                            <h4 class="text-lg font-bold mb-6">Fördergebiete erklärt</h4>
+                        <div class="anim space-y-3">
+                            <h4 class="text-lg font-bold mb-5">Fördergebiete erklärt</h4>
 
-                            <div class="flex items-center gap-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                                <div class="w-8 h-8 rounded-lg c-gebiet flex items-center justify-center text-xs font-bold">C</div>
+                            <div class="flex items-center gap-4 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-xs font-bold text-white shadow-lg">C</div>
                                 <div>
-                                    <div class="font-semibold text-emerald-400">C-Fördergebiet</div>
+                                    <div class="font-semibold text-amber-400">C-Fördergebiet</div>
                                     <div class="text-sm text-slate-400">Höchste Förderquoten (bis 45%)</div>
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-4 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                                <div class="w-8 h-8 rounded-lg d-gebiet flex items-center justify-center text-xs font-bold">D</div>
+                            <div class="flex items-center gap-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center text-xs font-bold text-white shadow-lg">D</div>
                                 <div>
-                                    <div class="font-semibold text-blue-400">D-Fördergebiet</div>
+                                    <div class="font-semibold text-emerald-400">D-Fördergebiet</div>
                                     <div class="text-sm text-slate-400">Mittlere Förderquoten (bis 20%)</div>
                                 </div>
                             </div>
 
-                            <div class="mt-6 p-4 card">
+                            <div class="flex items-center gap-4 p-3 rounded-lg bg-slate-500/10 border border-slate-500/20">
+                                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-400 to-slate-600 flex items-center justify-center text-xs font-bold text-white shadow-lg">–</div>
+                                <div>
+                                    <div class="font-semibold text-slate-400">Kein GRW-Gebiet</div>
+                                    <div class="text-sm text-slate-500">Keine GRW-Förderung, aber EFRE möglich</div>
+                                </div>
+                            </div>
+
+                            <div class="mt-5 p-4 card">
                                 <div class="text-sm">
-                                    <div class="flex items-center gap-2 text-emerald-400 font-semibold mb-2">
+                                    <div class="flex items-center gap-2 text-amber-400 font-semibold mb-2">
                                         <iconify-icon icon="solar:verified-check-bold" width="18"></iconify-icon>
                                         Vollständig im C-Gebiet:
                                     </div>
                                     <div class="text-slate-300 leading-relaxed">
                                         Brandenburg, Sachsen, Sachsen-Anhalt, Thüringen, Mecklenburg-Vorpommern
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="p-4 card">
-                                <div class="text-sm">
-                                    <div class="flex items-center gap-2 text-amber-400 font-semibold mb-2">
-                                        <iconify-icon icon="solar:map-point-bold" width="18"></iconify-icon>
-                                        Teilweise förderfähig:
-                                    </div>
-                                    <div class="text-slate-400 leading-relaxed">
-                                        Niedersachsen, NRW, Bayern, Hessen, Schleswig-Holstein, u.v.m.
                                     </div>
                                 </div>
                             </div>
@@ -658,50 +658,81 @@
             <!-- ==================== SLIDE 5: WAS WIRD GEFÖRDERT ==================== -->
             <section class="slide h-full flex-col items-center justify-center px-6 md:px-16" data-chapter="Förderfähige Investitionen">
                 <div class="max-w-6xl mx-auto w-full">
-                    <h2 class="anim text-2xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-14">
+                    <h2 class="anim text-2xl md:text-4xl lg:text-5xl font-bold text-center mb-6 md:mb-10">
                         Was wird <span class="gradient-text-static">gefördert</span>?
                     </h2>
+                    <p class="anim text-center text-slate-500 text-sm md:text-base mb-8 md:mb-12">Praxisbeispiele aus über 500 erfolgreichen Anträgen</p>
 
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                        <div class="anim card p-4 md:p-6 text-center group">
-                            <div class="w-14 h-14 md:w-20 md:h-20 mx-auto rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/10 border border-blue-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                <iconify-icon icon="solar:buildings-2-bold-duotone" width="32" class="text-blue-400"></iconify-icon>
+                    <div class="grid md:grid-cols-2 gap-4 md:gap-6">
+                        <!-- Gebäude -->
+                        <div class="anim card p-5 md:p-6 group hover:border-blue-500/30">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/10 border border-blue-500/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                    <iconify-icon icon="solar:buildings-2-bold-duotone" width="24" class="text-blue-400"></iconify-icon>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-blue-400 mb-3">Gebäude</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-2.5 py-1 text-xs bg-blue-500/10 text-blue-300 rounded-full">Neue Produktionshalle</span>
+                                        <span class="px-2.5 py-1 text-xs bg-blue-500/10 text-blue-300 rounded-full">Hallenerweiterung</span>
+                                        <span class="px-2.5 py-1 text-xs bg-blue-500/10 text-blue-300 rounded-full">Logistikzentrum</span>
+                                        <span class="px-2.5 py-1 text-xs bg-blue-500/10 text-blue-300 rounded-full">F&E-Gebäude</span>
+                                    </div>
+                                </div>
                             </div>
-                            <h4 class="font-bold text-sm md:text-base mb-2">Gebäude</h4>
-                            <p class="text-xs text-slate-500">Neubau, Erweiterung, Kauf</p>
                         </div>
 
-                        <div class="anim card p-4 md:p-6 text-center group">
-                            <div class="w-14 h-14 md:w-20 md:h-20 mx-auto rounded-2xl bg-gradient-to-br from-emerald-500/20 to-green-500/10 border border-emerald-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                <iconify-icon icon="solar:cpu-bolt-bold-duotone" width="32" class="text-emerald-400"></iconify-icon>
+                        <!-- Maschinen -->
+                        <div class="anim card p-5 md:p-6 group hover:border-emerald-500/30">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-green-500/10 border border-emerald-500/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                    <iconify-icon icon="solar:cpu-bolt-bold-duotone" width="24" class="text-emerald-400"></iconify-icon>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-emerald-400 mb-3">Maschinen & Anlagen</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full">Produktionsmaschinen</span>
+                                        <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full">Robotik & Automation</span>
+                                        <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full">Verpackungsanlagen</span>
+                                        <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-300 rounded-full">Prüfsysteme</span>
+                                    </div>
+                                </div>
                             </div>
-                            <h4 class="font-bold text-sm md:text-base mb-2">Maschinen</h4>
-                            <p class="text-xs text-slate-500">Produktion & Anlagen</p>
                         </div>
 
-                        <div class="anim card p-4 md:p-6 text-center group">
-                            <div class="w-14 h-14 md:w-20 md:h-20 mx-auto rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/10 border border-purple-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                <iconify-icon icon="solar:monitor-bold-duotone" width="32" class="text-purple-400"></iconify-icon>
+                        <!-- IT & Digital -->
+                        <div class="anim card p-5 md:p-6 group hover:border-purple-500/30">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/10 border border-purple-500/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                    <iconify-icon icon="solar:monitor-bold-duotone" width="24" class="text-purple-400"></iconify-icon>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-purple-400 mb-3">IT & Digitalisierung</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-2.5 py-1 text-xs bg-purple-500/10 text-purple-300 rounded-full">ERP-Systeme</span>
+                                        <span class="px-2.5 py-1 text-xs bg-purple-500/10 text-purple-300 rounded-full">Cloud-Infrastruktur</span>
+                                        <span class="px-2.5 py-1 text-xs bg-purple-500/10 text-purple-300 rounded-full">KI-Lösungen</span>
+                                        <span class="px-2.5 py-1 text-xs bg-purple-500/10 text-purple-300 rounded-full">Cybersecurity</span>
+                                    </div>
+                                </div>
                             </div>
-                            <h4 class="font-bold text-sm md:text-base mb-2">IT & Digital</h4>
-                            <p class="text-xs text-slate-500">Software & Infrastruktur</p>
                         </div>
 
-                        <div class="anim card p-4 md:p-6 text-center group">
-                            <div class="w-14 h-14 md:w-20 md:h-20 mx-auto rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/10 border border-amber-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                <iconify-icon icon="solar:sun-bold-duotone" width="32" class="text-amber-400"></iconify-icon>
-                            </div>
-                            <h4 class="font-bold text-sm md:text-base mb-2">Energie</h4>
-                            <p class="text-xs text-slate-500">PV, Speicher, Effizienz</p>
-                        </div>
-                    </div>
-
-                    <div class="anim mt-8 md:mt-12 warning-box p-5 md:p-6">
-                        <div class="flex items-start gap-4">
-                            <iconify-icon icon="solar:danger-triangle-bold" width="24" class="text-red-400 shrink-0 mt-0.5"></iconify-icon>
-                            <div>
-                                <h4 class="font-bold text-red-400 mb-2">Nicht gefördert:</h4>
-                                <p class="text-slate-400 text-sm">Reine Ersatzinvestitionen (alte Maschine gegen identische neue) oder Modernisierungen ohne wirtschaftlichen Wachstumseffekt.</p>
+                        <!-- Energie -->
+                        <div class="anim card p-5 md:p-6 group hover:border-amber-500/30">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/10 border border-amber-500/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                    <iconify-icon icon="solar:sun-bold-duotone" width="24" class="text-amber-400"></iconify-icon>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-amber-400 mb-3">Energie & Effizienz</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-2.5 py-1 text-xs bg-amber-500/10 text-amber-300 rounded-full">Photovoltaik</span>
+                                        <span class="px-2.5 py-1 text-xs bg-amber-500/10 text-amber-300 rounded-full">Batteriespeicher</span>
+                                        <span class="px-2.5 py-1 text-xs bg-amber-500/10 text-amber-300 rounded-full">Wärmerückgewinnung</span>
+                                        <span class="px-2.5 py-1 text-xs bg-amber-500/10 text-amber-300 rounded-full">LED-Beleuchtung</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -755,67 +786,120 @@
             <!-- ==================== SLIDE 7: BRANCHEN ==================== -->
             <section class="slide h-full flex-col items-center justify-center px-6 md:px-16" data-chapter="Förderfähige Branchen">
                 <div class="max-w-6xl mx-auto w-full">
-                    <h2 class="anim text-2xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-12">
+                    <h2 class="anim text-2xl md:text-4xl lg:text-5xl font-bold text-center mb-3">
                         Welche <span class="gradient-text-static">Branchen</span> sind förderfähig?
                     </h2>
+                    <p class="anim text-center text-slate-400 text-sm md:text-base mb-8 md:mb-10 max-w-2xl mx-auto">
+                        Förderfähig sind Unternehmen, die <span class="text-blue-400 font-medium">überregionale Wertschöpfung</span> erzeugen.
+                    </p>
 
-                    <div class="grid md:grid-cols-3 gap-6">
-                        <!-- Positivliste -->
-                        <div class="anim card p-5 md:p-6">
-                            <div class="flex items-center gap-3 mb-5">
-                                <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                                    <iconify-icon icon="solar:check-circle-bold" width="20" class="text-emerald-400"></iconify-icon>
+                    <div class="grid md:grid-cols-3 gap-4 md:gap-6">
+                        <!-- Direkt förderfähig -->
+                        <div class="anim card p-5 md:p-6 border-emerald-500/20">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                                    <iconify-icon icon="solar:check-circle-bold" width="22" class="text-emerald-400"></iconify-icon>
                                 </div>
-                                <h3 class="font-bold text-emerald-400">Positivliste</h3>
+                                <h3 class="font-bold text-emerald-400">Direkt förderfähig</h3>
                             </div>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="industry-tag positive">Maschinenbau</span>
-                                <span class="industry-tag positive">IT-Services</span>
-                                <span class="industry-tag positive">Pharma</span>
-                                <span class="industry-tag positive">Chemie</span>
-                                <span class="industry-tag positive">Elektronik</span>
-                                <span class="industry-tag positive">Metallbau</span>
-                                <span class="industry-tag positive">Software</span>
-                                <span class="industry-tag positive">F&E</span>
+                            <p class="text-xs text-slate-500 mb-4">Beispiele aus der Positivliste:</p>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:factory-bold" width="16" class="text-emerald-400"></iconify-icon>
+                                    Industrie & Produktion
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:cpu-bolt-bold" width="16" class="text-emerald-400"></iconify-icon>
+                                    Maschinenbau
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:laptop-bold" width="16" class="text-emerald-400"></iconify-icon>
+                                    IT & Software
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:test-tube-bold" width="16" class="text-emerald-400"></iconify-icon>
+                                    Chemie & Pharma
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:lightbulb-bolt-bold" width="16" class="text-emerald-400"></iconify-icon>
+                                    Forschung & Entwicklung
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Bedingt -->
-                        <div class="anim card p-5 md:p-6">
-                            <div class="flex items-center gap-3 mb-5">
-                                <div class="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center">
-                                    <iconify-icon icon="solar:question-circle-bold" width="20" class="text-amber-400"></iconify-icon>
+                        <!-- Bedingt förderfähig -->
+                        <div class="anim card p-5 md:p-6 border-amber-500/20">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                                    <iconify-icon icon="solar:map-arrow-right-bold" width="22" class="text-amber-400"></iconify-icon>
                                 </div>
-                                <h3 class="font-bold text-amber-400">Bedingt</h3>
+                                <h3 class="font-bold text-amber-400">Bei überregionaler Tätigkeit</h3>
                             </div>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="industry-tag conditional">Großhandel</span>
-                                <span class="industry-tag conditional">Logistik</span>
-                                <span class="industry-tag conditional">Druckerei</span>
-                                <span class="industry-tag conditional">Medien</span>
-                                <span class="industry-tag conditional">Marketing</span>
-                                <span class="industry-tag conditional">Ingenieure</span>
+                            <p class="text-xs text-slate-500 mb-4">Förderfähig wenn Umsätze überregional:</p>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:box-bold" width="16" class="text-amber-400"></iconify-icon>
+                                    Großhandel
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:delivery-bold" width="16" class="text-amber-400"></iconify-icon>
+                                    Logistik & Transport
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:clapperboard-open-play-bold" width="16" class="text-amber-400"></iconify-icon>
+                                    Medien & Filmproduktion
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:ruler-pen-bold" width="16" class="text-amber-400"></iconify-icon>
+                                    Ingenieur- & Planungsbüros
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:chat-round-like-bold" width="16" class="text-amber-400"></iconify-icon>
+                                    Marketing & Werbung
+                                </div>
                             </div>
-                            <p class="text-xs text-slate-500 mt-4">Nachweis überregionaler Tätigkeit erforderlich</p>
                         </div>
 
-                        <!-- Negativliste -->
-                        <div class="anim card p-5 md:p-6">
-                            <div class="flex items-center gap-3 mb-5">
-                                <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
-                                    <iconify-icon icon="solar:close-circle-bold" width="20" class="text-red-400"></iconify-icon>
+                        <!-- Nicht förderfähig -->
+                        <div class="anim card p-5 md:p-6 border-red-500/20">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center">
+                                    <iconify-icon icon="solar:close-circle-bold" width="22" class="text-red-400"></iconify-icon>
                                 </div>
-                                <h3 class="font-bold text-red-400">Ausgeschlossen</h3>
+                                <h3 class="font-bold text-red-400">Nicht förderfähig</h3>
                             </div>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="industry-tag negative">Einzelhandel</span>
-                                <span class="industry-tag negative">Baugewerbe</span>
-                                <span class="industry-tag negative">Finanzen</span>
-                                <span class="industry-tag negative">Immobilien</span>
-                                <span class="industry-tag negative">Landwirtschaft</span>
-                                <span class="industry-tag negative">Gesundheit</span>
+                            <p class="text-xs text-slate-500 mb-4">Lokale Dienstleistungen sind ausgeschlossen:</p>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:cart-large-2-bold" width="16" class="text-red-400"></iconify-icon>
+                                    Einzelhandel
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:home-angle-bold" width="16" class="text-red-400"></iconify-icon>
+                                    Baugewerbe
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:wallet-bold" width="16" class="text-red-400"></iconify-icon>
+                                    Finanz- & Versicherungen
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:buildings-bold" width="16" class="text-red-400"></iconify-icon>
+                                    Immobilien
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <iconify-icon icon="solar:hospital-bold" width="16" class="text-red-400"></iconify-icon>
+                                    Gesundheitswesen
+                                </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Footer Hinweis -->
+                    <div class="anim mt-6 md:mt-8 text-center">
+                        <p class="text-sm text-slate-500">
+                            <iconify-icon icon="solar:info-circle-linear" width="16" class="inline-block mr-1 align-text-bottom"></iconify-icon>
+                            Grundlage ist die <span class="text-slate-400">GRW-Positivliste</span> (WZ-Branchenklassifikation)
+                        </p>
                     </div>
                 </div>
             </section>
@@ -828,7 +912,7 @@
                     </h2>
 
                     <div class="anim calculator-display text-center mb-8">
-                        <p class="text-slate-400 text-sm mb-2">Mittelständisches Unternehmen in Bremen (D-Gebiet, 10%)</p>
+                        <p class="text-slate-400 text-sm mb-2">Mittelständisches Unternehmen in Brandenburg (C-Gebiet, 30%)</p>
 
                         <div class="grid md:grid-cols-3 gap-6 mt-8">
                             <div>
@@ -846,24 +930,27 @@
                         </div>
 
                         <div class="mt-8 pt-8 border-t border-white/10">
-                            <div class="text-slate-400 mb-2">Förderquote: 10%</div>
-                            <div class="big-number gradient-text-static">300.000 €</div>
+                            <div class="text-slate-400 mb-2">Förderquote: 30%</div>
+                            <div class="big-number gradient-text-static">900.000 €</div>
                             <div class="text-emerald-400 font-medium mt-2">Staatlicher Zuschuss – nicht rückzahlbar!</div>
                         </div>
                     </div>
 
                     <div class="anim grid md:grid-cols-3 gap-4 text-center">
                         <div class="card p-4">
+                            <div class="text-xs text-slate-500 mb-1">Investition</div>
                             <div class="text-3xl font-bold text-blue-400">1 Mio €</div>
-                            <div class="text-sm text-slate-500 mt-1">→ bis 450.000 €</div>
+                            <div class="text-sm text-slate-400 mt-2">→ 300.000 € Zuschuss</div>
                         </div>
                         <div class="card p-4">
+                            <div class="text-xs text-slate-500 mb-1">Investition</div>
                             <div class="text-3xl font-bold text-emerald-400">2 Mio €</div>
-                            <div class="text-sm text-slate-500 mt-1">→ bis 900.000 €</div>
+                            <div class="text-sm text-slate-400 mt-2">→ 600.000 € Zuschuss</div>
                         </div>
                         <div class="card p-4">
+                            <div class="text-xs text-slate-500 mb-1">Investition</div>
                             <div class="text-3xl font-bold text-purple-400">5 Mio €</div>
-                            <div class="text-sm text-slate-500 mt-1">→ bis 2,25 Mio €</div>
+                            <div class="text-sm text-slate-400 mt-2">→ 1,5 Mio € Zuschuss</div>
                         </div>
                     </div>
                 </div>
@@ -967,8 +1054,8 @@
                     </div>
 
                     <div class="anim">
-                        <a href="/#kontakt" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold rounded-xl transition-all transform hover:scale-105">
-                            <iconify-icon icon="solar:chat-round-call-bold" width="24"></iconify-icon>
+                        <a href="/zuschusscheck" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold rounded-xl transition-all transform hover:scale-105">
+                            <iconify-icon icon="solar:checklist-minimalistic-bold" width="24"></iconify-icon>
                             Jetzt Förderpotenzial prüfen
                         </a>
                     </div>
