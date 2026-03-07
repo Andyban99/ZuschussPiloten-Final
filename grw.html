@@ -330,6 +330,9 @@
             .slide {
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
+                justify-content: flex-start !important;
+                align-items: stretch !important;
+                padding-top: 1rem;
             }
             .slide > div {
                 padding-top: 2rem;
@@ -516,9 +519,9 @@
                     <div class="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12">
                         <!-- Official GRW Map -->
                         <div class="anim">
-                            <div class="rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-white" style="max-width: 450px;">
-                                <object data="grw-fordergebiete-2022-2027.pdf" type="application/pdf" width="450" height="550" class="hidden md:block">
-                                    <embed src="grw-fordergebiete-2022-2027.pdf" type="application/pdf" width="450" height="550" />
+                            <div class="rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-white" style="max-width: 380px;">
+                                <object data="grw-fordergebiete-2022-2027.pdf" type="application/pdf" width="380" height="420" class="hidden md:block">
+                                    <embed src="grw-fordergebiete-2022-2027.pdf" type="application/pdf" width="380" height="420" />
                                 </object>
                                 <!-- Mobile: Link to PDF -->
                                 <a href="grw-fordergebiete-2022-2027.pdf" target="_blank" class="md:hidden block p-8 text-center bg-slate-800">
@@ -580,9 +583,82 @@
                     <h2 class="anim text-2xl md:text-4xl lg:text-5xl font-bold text-center mb-4">
                         Wie hoch ist die <span class="gradient-text-static">Förderung</span>?
                     </h2>
-                    <p class="anim text-center text-slate-500 mb-8 md:mb-12">Abhängig von Standort und Unternehmensgröße</p>
+                    <p class="anim text-center text-slate-500 mb-6 md:mb-12">Abhängig von Standort und Unternehmensgröße</p>
 
-                    <div class="anim overflow-x-auto">
+                    <!-- Mobile: Card Layout -->
+                    <div class="md:hidden space-y-4">
+                        <!-- Klein -->
+                        <div class="anim card p-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                                    <iconify-icon icon="solar:user-bold" width="20" class="text-emerald-400"></iconify-icon>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">Kleines Unternehmen</div>
+                                    <div class="text-xs text-slate-500">&lt;50 MA, &lt;10 Mio €</div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between">
+                                <div class="text-center">
+                                    <div class="text-xs text-amber-400 mb-1">C-Gebiet</div>
+                                    <div class="text-xl font-bold text-amber-400">35–45%</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xs text-emerald-400 mb-1">D-Gebiet</div>
+                                    <div class="text-xl font-bold text-emerald-400">~20%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mittel -->
+                        <div class="anim card p-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                                    <iconify-icon icon="solar:users-group-rounded-bold" width="20" class="text-blue-400"></iconify-icon>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">Mittleres Unternehmen</div>
+                                    <div class="text-xs text-slate-500">&lt;250 MA, &lt;50 Mio €</div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between">
+                                <div class="text-center">
+                                    <div class="text-xs text-amber-400 mb-1">C-Gebiet</div>
+                                    <div class="text-xl font-bold text-amber-400">25–35%</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xs text-emerald-400 mb-1">D-Gebiet</div>
+                                    <div class="text-xl font-bold text-emerald-400">10–20%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Groß -->
+                        <div class="anim card p-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                                    <iconify-icon icon="solar:buildings-bold" width="20" class="text-purple-400"></iconify-icon>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">Großunternehmen</div>
+                                    <div class="text-xs text-slate-500">≥250 MA, ≥50 Mio €</div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between">
+                                <div class="text-center">
+                                    <div class="text-xs text-amber-400 mb-1">C-Gebiet</div>
+                                    <div class="text-xl font-bold text-amber-400">15–25%</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xs text-slate-500 mb-1">D-Gebiet</div>
+                                    <div class="text-sm font-medium text-slate-500">teilw. keine</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desktop: Table Layout -->
+                    <div class="anim hidden md:block">
                         <table class="data-table">
                             <thead>
                                 <tr>
@@ -605,10 +681,10 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="text-2xl font-bold text-emerald-400">35–45%</span>
+                                        <span class="text-2xl font-bold text-amber-400">35–45%</span>
                                     </td>
                                     <td>
-                                        <span class="text-2xl font-bold text-blue-400">~20%</span>
+                                        <span class="text-2xl font-bold text-emerald-400">~20%</span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -624,10 +700,10 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="text-2xl font-bold text-emerald-400">25–35%</span>
+                                        <span class="text-2xl font-bold text-amber-400">25–35%</span>
                                     </td>
                                     <td>
-                                        <span class="text-2xl font-bold text-blue-400">10–20%</span>
+                                        <span class="text-2xl font-bold text-emerald-400">10–20%</span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -643,7 +719,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="text-2xl font-bold text-emerald-400">15–25%</span>
+                                        <span class="text-2xl font-bold text-amber-400">15–25%</span>
                                     </td>
                                     <td>
                                         <span class="text-lg font-medium text-slate-500">teilweise keine</span>
@@ -1095,6 +1171,7 @@
     let touchStartX = 0;
     let touchEndX = 0;
     let touchStartY = 0;
+    let lastTouchTime = 0;
 
     // Create particles
     function createParticles() {
@@ -1141,6 +1218,7 @@
         slides[currentIndex].classList.remove('active');
         currentIndex = index;
         slides[currentIndex].classList.add('active');
+        slides[currentIndex].scrollTop = 0;
         updateUI();
     }
 
@@ -1180,9 +1258,12 @@
         const diffX = touchStartX - touchEndX;
         const diffY = Math.abs(touchStartY - touchEndY);
 
+        let navigated = false;
+
         if (Math.abs(diffX) > 50 && diffY < 100) {
             if (diffX > 0) nextSlide();
             else prevSlide();
+            navigated = true;
         }
         else if (Math.abs(diffX) < 20 && diffY < 20) {
             const screenWidth = window.innerWidth;
@@ -1191,6 +1272,12 @@
             } else {
                 prevSlide();
             }
+            navigated = true;
+        }
+
+        // Prevent click event from firing after touch
+        if (navigated) {
+            lastTouchTime = Date.now();
         }
     }
 
@@ -1209,6 +1296,9 @@
 
         slidesContainer.addEventListener('click', (e) => {
             if (e.target.closest('button, a, input, select')) return;
+
+            // Ignore click if it came right after a touch event (prevents double navigation)
+            if (Date.now() - lastTouchTime < 300) return;
 
             const rect = slidesContainer.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
