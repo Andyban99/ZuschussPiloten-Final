@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GRW Investitionsförderung | Zuschuss Piloten</title>
+
+    <link rel="icon" type="image/svg+xml" href="assets/Icon Black White BG.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        html, body { height: 100%; overflow: hidden; background: #0a0a0f; }
+
+        .sidebar {
+            background: linear-gradient(180deg, #0d0d14 0%, #111118 100%);
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .mobile-menu.open { transform: translateX(0); }
+        .mobile-overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .chapter-item { transition: all 0.2s ease; }
+        .chapter-item:hover { background: rgba(255,255,255,0.03); }
+        .chapter-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid #3b82f6;
+        }
+        .chapter-item.active .chapter-title { color: #3b82f6; }
+
+        .slide { display: none; opacity: 0; }
+        .slide.active { display: flex; animation: fadeIn 0.5s ease forwards; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .slide.active .anim {
+            opacity: 0;
+            animation: slideUp 0.6s ease forwards;
+        }
+        .slide.active .anim:nth-child(1) { animation-delay: 0.1s; }
+        .slide.active .anim:nth-child(2) { animation-delay: 0.2s; }
+        .slide.active .anim:nth-child(3) { animation-delay: 0.3s; }
+        .slide.active .anim:nth-child(4) { animation-delay: 0.4s; }
+        .slide.active .anim:nth-child(5) { animation-delay: 0.5s; }
+        .slide.active .anim:nth-child(6) { animation-delay: 0.6s; }
+        .slide.active .anim:nth-child(7) { animation-delay: 0.7s; }
+        .slide.active .anim:nth-child(8) { animation-delay: 0.8s; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes barGrow {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 50%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shimmer 3s linear infinite;
+        }
+
+        .gradient-text-static {
+            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glow {
+            box-shadow: 0 0 60px rgba(59, 130, 246, 0.2);
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        .float { animation: float 4s ease-in-out infinite; }
+
+        .card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            transition: all 0.4s ease;
+        }
+        .card:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, rgba(59, 130, 246, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .nav-btn { transition: all 0.2s ease; }
+        .nav-btn:hover:not(:disabled) { background: rgba(255,255,255,0.1); }
+        .nav-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+
+        /* Germany Map Styles */
+        .germany-map {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 0.8;
+        }
+
+        .bundesland {
+            position: absolute;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        .bundesland:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .c-gebiet {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
+        }
+        .d-gebiet {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+        .teilweise {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+        }
+        .kein-gebiet {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            box-shadow: 0 4px 20px rgba(55, 65, 81, 0.3);
+        }
+
+        /* Animated Progress Bars */
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transform-origin: left;
+            animation: barGrow 1s ease-out forwards;
+        }
+
+        /* Ripple Effect */
+        .ripple-container {
+            position: relative;
+        }
+        .ripple {
+            position: absolute;
+            border: 2px solid rgba(59, 130, 246, 0.5);
+            border-radius: 50%;
+            animation: ripple 2s ease-out infinite;
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        .data-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+        }
+        .data-table td {
+            padding: 16px;
+            background: rgba(255,255,255,0.03);
+        }
+        .data-table tr td:first-child {
+            border-radius: 12px 0 0 12px;
+        }
+        .data-table tr td:last-child {
+            border-radius: 0 12px 12px 0;
+        }
+
+        /* Industry Tags */
+        .industry-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .industry-tag.positive {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        .industry-tag.conditional {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        .industry-tag.negative {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Calculator */
+        .calculator-display {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 2px solid rgba(59, 130, 246, 0.4);
+            border-radius: 24px;
+            padding: 32px;
+        }
+
+        .big-number {
+            font-size: clamp(3rem, 12vw, 6rem);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        /* Timeline */
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #3b82f6 0%, transparent 100%);
+        }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 4px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+        }
+
+        /* Success Box */
+        .success-box {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.05) 100%);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+        }
+
+        /* Scrollable slides on mobile */
+        @media (max-width: 768px) {
+            .slide {
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .slide > div {
+                padding-top: 2rem;
+                padding-bottom: 6rem;
+            }
+            .germany-map {
+                max-width: 280px;
+            }
+        }
+
+        /* Particle background */
+        .particles {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="text-white">
+
+<div class="flex h-screen relative">
+
+    <!-- MOBILE OVERLAY -->
+    <div id="mobileOverlay" class="mobile-overlay fixed inset-0 bg-black/60 z-40 lg:hidden" onclick="toggleMobileMenu()"></div>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar mobile-menu lg:transform-none fixed lg:relative w-64 h-full flex flex-col py-6 lg:py-8 px-2 z-50">
+        <div class="px-4 mb-6 lg:mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <img src="assets/Icon White.svg" alt="Logo" class="w-8 h-8">
+                    <span class="text-sm font-semibold text-slate-300">Zuschuss Piloten</span>
+                </div>
+                <button class="lg:hidden text-slate-400" onclick="toggleMobileMenu()">
+                    <iconify-icon icon="solar:close-circle-linear" width="24"></iconify-icon>
+                </button>
+            </div>
+            <span class="text-[10px] uppercase tracking-[0.2em] text-slate-600 font-medium">GRW Kapitel</span>
+        </div>
+
+        <nav class="flex-1 space-y-1 overflow-y-auto" id="chapterNav"></nav>
+
+        <div class="px-4 mt-6 pt-4 border-t border-white/5">
+            <a href="/" class="flex items-center gap-2 text-xs text-slate-500 hover:text-white transition-colors">
+                <iconify-icon icon="solar:arrow-left-linear" width="14"></iconify-icon>
+                Zurück zur Website
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="flex-1 h-full relative overflow-hidden">
+
+        <!-- Particle Background -->
+        <div class="particles" id="particles"></div>
+
+        <!-- Mobile Header -->
+        <div class="lg:hidden fixed top-0 left-0 right-0 h-14 bg-[#0a0a0f]/95 backdrop-blur-sm border-b border-white/5 flex items-center justify-between px-4 z-30">
+            <button onclick="toggleMobileMenu()" class="text-slate-400">
+                <iconify-icon icon="solar:hamburger-menu-linear" width="24"></iconify-icon>
+            </button>
+            <div class="text-sm">
+                <span id="currentSlideMobile" class="text-blue-400 font-bold">1</span>
+                <span class="text-slate-700">/</span>
+                <span id="totalSlidesMobile" class="text-slate-600">10</span>
+            </div>
+            <div class="w-6"></div>
+        </div>
+
+        <!-- Desktop Slide Counter -->
+        <div class="hidden lg:block absolute top-6 right-8 z-20 text-sm">
+            <span id="currentSlide" class="text-blue-400 font-bold">1</span>
+            <span class="text-slate-700">/</span>
+            <span id="totalSlides" class="text-slate-600">10</span>
+        </div>
+
+        <div id="slidesContainer" class="h-full pt-14 lg:pt-0">
+
+            <!-- ==================== SLIDE 1: TITLE ==================== -->
+            <section class="slide active h-full flex-col items-center justify-center px-6 md:px-16" data-chapter="Einführung">
+                <div class="text-center max-w-5xl mx-auto">
+                    <div class="anim mb-8 md:mb-12 flex justify-center">
+                        <div class="glow rounded-3xl p-6 md:p-8 bg-gradient-to-br from-blue-500/10 to-cyan-500/5 backdrop-blur-sm border border-white/10 float">
+                            <iconify-icon icon="solar:hand-money-bold-duotone" width="64" class="md:hidden text-blue-400"></iconify-icon>
+                            <iconify-icon icon="solar:hand-money-bold-duotone" width="96" class="hidden md:block text-blue-400"></iconify-icon>
+                        </div>
+                    </div>
+                    <p class="anim text-xs md:text-sm uppercase tracking-[0.2em] md:tracking-[0.3em] text-blue-400 mb-3 md:mb-4">Staatliche Investitionsförderung</p>
+                    <h1 class="anim text-3xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 leading-tight">
+                        <span class="gradient-text">GRW</span> Förderung
+                    </h1>
+                    <p class="anim text-base md:text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+                        Gemeinschaftsaufgabe „Verbesserung der regionalen Wirtschaftsstruktur"
+                    </p>
+                    <div class="anim mt-8 md:mt-12 flex flex-wrap justify-center gap-4 md:gap-6">
+                        <div class="stat-card px-5 py-3 rounded-xl">
+                            <div class="text-2xl md:text-3xl font-bold text-blue-400">bis 45%</div>
+                            <div class="text-xs text-slate-500">Zuschuss</div>
+                        </div>
+                        <div class="stat-card px-5 py-3 rounded-xl">
+                            <div class="text-2xl md:text-3xl font-bold text-emerald-400">0€</div>
+                            <div class="text-xs text-slate-500">Rückzahlung</div>
+                        </div>
+                    </div>
+                    <div class="anim mt-10 md:mt-14 flex items-center justify-center gap-2 text-slate-600">
+                        <kbd class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs font-mono text-slate-400">→</kbd>
+                        <span class="text-xs md:text-sm">oder tippen zum Starten</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SLIDE 2: WAS IST GRW ==================== -->
+            <section class="slide h-full flex-col items-center justify-center px-6 md:px-16" data-chapter="Was ist GRW?">
+                <div class="max-w-5xl mx-auto w-full">
+                    <h2 class="anim text-2xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-14">
+                        Was ist die <span class="gradient-text-static">GRW</span>?
+                    </h2>
+
+                    <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+                        <div class="anim card p-6 md:p-8">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/10 border border-blue-500/30 flex items-center justify-center mb-5">
+                                <iconify-icon icon="solar:wallet-money-bold-duotone" width="28" class="text-blue-400"></iconify-icon>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">Nicht rückzahlbar</h3>
+                            <p class="text-slate-400 leading-relaxed">
+                                Der Zuschuss ist echtes Geld vom Staat – kein Kredit. Sie müssen nichts zurückzahlen, solange die Bedingungen eingehalten werden.
+                            </p>
+                        </div>
+
+                        <div class="anim card p-6 md:p-8">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-green-500/10 border border-emerald-500/30 flex items-center justify-center mb-5">
+                                <iconify-icon icon="solar:graph-up-bold-duotone" width="28" class="text-emerald-400"></iconify-icon>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">Wachstum fördern</h3>
+                            <p class="text-slate-400 leading-relaxed">
+                                Ziel ist die Stärkung wirtschaftlich schwächerer Regionen durch neue Arbeitsplätze und Investitionen.
+                            </p>
+                        </div>
+
+                        <div class="anim card p-6 md:p-8">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/10 border border-amber-500/30 flex items-center justify-center mb-5">
+                                <iconify-icon icon="solar:buildings-2-bold-duotone" width="28" class="text-amber-400"></iconify-icon>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">Regionale Stärkung</h3>
+                            <p class="text-slate-400 leading-relaxed">
+                                Strukturschwache Regionen erhalten Unterstützung für wirtschaftliche Entwicklung und Wettbewerbsfähigkeit.
+                            </p>
+                        </div>
+
+                        <div class="anim card p-6 md:p-8">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/10 border border-purple-500/30 flex items-center justify-center mb-5">
+                                <iconify-icon icon="solar:users-group-rounded-bold-duotone" width="28" class="text-purple-400"></iconify-icon>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">Arbeitsplätze</h3>
+                            <p class="text-slate-400 leading-relaxed">
+                                Durch Investitionen sollen neue Arbeitsplätze geschaffen oder bestehende gesichert werden.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SLIDE 3: FÖRDERGEBIETE MAP ==================== -->
+            <section class="slide h-full flex-col items-center justify-center px-6 md:px-16" data-chapter="Fördergebiete">
+                <div class="max-w-6xl mx-auto w-full">
+                    <h2 class="anim text-2xl md:text-4xl lg:text-5xl font-bold text-center mb-4">
+                        <span class="gradient-text-static">Fördergebiete</span> 2022–2027
+                    </h2>
+                    <p class="anim text-center text-slate-500 mb-8 md:mb-12">C-Gebiete (hohe Förderung) und D-Gebiete (mittlere Förderung)</p>
+
+                    <div class="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16">
+                        <!-- Simplified Map Visualization -->
+                        <div class="anim germany-map">
+                            <!-- North -->
+                            <div class="bundesland teilweise" style="top: 5%; left: 35%; width: 30%; height: 12%;">SH</div>
+                            <div class="bundesland c-gebiet" style="top: 10%; left: 68%; width: 28%; height: 18%;">MV</div>
+
+                            <!-- Middle North -->
+                            <div class="bundesland teilweise" style="top: 18%; left: 15%; width: 22%; height: 18%;">NI</div>
+                            <div class="bundesland teilweise" style="top: 22%; left: 5%; width: 10%; height: 8%;">HB</div>
+                            <div class="bundesland c-gebiet" style="top: 28%; left: 55%; width: 25%; height: 22%;">BB</div>
+                            <div class="bundesland c-gebiet" style="top: 22%; left: 42%; width: 12%; height: 10%;">BE</div>
+                            <div class="bundesland c-gebiet" style="top: 32%; left: 80%; width: 18%; height: 20%;">SA</div>
+
+                            <!-- Middle -->
+                            <div class="bundesland teilweise" style="top: 38%; left: 10%; width: 25%; height: 15%;">NRW</div>
+                            <div class="bundesland teilweise" style="top: 52%; left: 35%; width: 18%; height: 15%;">HE</div>
+                            <div class="bundesland c-gebiet" style="top: 52%; left: 55%; width: 22%; height: 18%;">TH</div>
+                            <div class="bundesland c-gebiet" style="top: 52%; left: 78%; width: 20%; height: 25%;">SN</div>
+
+                            <!-- South -->
+                            <div class="bundesland teilweise" style="top: 55%; left: 8%; width: 18%; height: 15%;">RP</div>
+                            <div class="bundesland teilweise" style="top: 68%; left: 5%; width: 12%; height: 12%;">SL</div>
+                            <div class="bundesland teilweise" style="top: 68%; left: 20%; width: 20%; height: 14%;">BW</div>
+                            <div class="bundesland teilweise" style="top: 70%; left: 45%; width: 35%; height: 28%;">BY</div>
+                        </div>
+
+                        <!-- Legend -->
+                        <div class="anim space-y-4">
+                            <h4 class="text-lg font-bold mb-6">Legende</h4>
+
+                            <div class="flex items-center gap-4">
+                                <div class="w-6 h-6 rounded c-gebiet"></div>
+                                <div>
+                                    <div class="font-semibold text-emerald-400">C-Fördergebiet</div>
+                                    <div class="text-sm text-slate-500">Höchste Förderquoten (bis 45%)</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                <div class="w-6 h-6 rounded teilweise"></div>
+                                <div>
+                                    <div class="font-semibold text-amber-400">Teilweise Fördergebiet</div>
+                                    <div class="text-sm text-slate-500">Bestimmte Landkreise förderfähig</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                <div class="w-6 h-6 rounded d-gebiet"></div>
+                                <div>
+                                    <div class="font-semibold text-blue-400">D-Fördergebiet</div>
+                                    <div class="text-sm text-slate-500">Mittlere Förderquoten</div>
+                                </div>
+                            </div>
+
+                            <div class="mt-8 p-4 card">
+                                <div class="text-sm text-slate-400">
+                                    <strong class="text-white">Vollständig gefördert:</strong><br>
+                                    Brandenburg, Sachsen, Sachsen-Anhalt,<br>
+                                    Thüringen, Mecklenburg-Vorpommern
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SLIDE 4: FÖRDERQUOTEN ==================== -->
+            <section class="slide h-full flex-col items-center justify-center px-6 md:px-16" data-chapter="Förderquoten">
+                <div class="max-w-5xl mx-auto w-full">
+                    <h2 class="anim text-2xl md:text-4xl lg:text-5xl font-bold text-center mb-4">
+                        Wie hoch ist die <span class="gradient-text-static">Förderung</span>?
+                    </h2>
+                    <p class="anim text-center text-slate-500 mb-8 md:mb-12">Abhängig von Standort und Unternehmensgröße</p>
+
+                    <div class="anim overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Unternehmensgröße</th>
+                                    <th>C-Gebiet</th>
+                                    <th>D-Gebiet</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                                                <iconify-icon icon="solar:user-bold" width="20" class="text-emerald-400"></iconify-icon>
+                                            </div>
+                                            <div>
+                                                <div class="font-semibold">Klein</div>
+                                                <div class="text-xs text-slate-500">&lt;50 MA, &lt;10 Mio € Umsatz</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-2xl font-bold text-emerald-400">35–45%</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-2xl font-bold text-blue-400">~20%</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                                                <iconify-icon icon="solar:users-group-rounded-bold" width="20" class="text-blue-400"></iconify-icon>
+                                            </div>
+                                            <div>
+                                                <div class="font-semibold">Mittel</div>
+                                                <div class="text-xs text-slate-500">&lt;250 MA, &lt;50 Mio € Umsatz</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-2xl font-bold text-emerald-400">25–35%</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-2xl font-bold text-blue-400">10–20%</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                                                <iconify-icon icon="solar:buildings-bold" width="20" class="text-purple-400"></iconify-icon>
+                                            </div>
+                                            <div>
+                                                <div class="font-semibold">Groß</div>
+                                                <div class="text-xs text-slate-500">≥250 MA, ≥50 Mio € Umsatz</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-2xl font-bold text-emerald-400">15–25%</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-lg font-medium text-slate-500">teilweise keine</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SLIDE 5: WAS WIRD GEFÖRDERT ==================== -->
+            <section class="slide h-full flex-col items-center justify-center px-6 md:px-16" data-chapter="Förderfähige Investitionen">
+                <div class="max-w-6xl mx-auto w-full">
+                    <h2 class="anim text-2xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-14">
+                        Was wird <span class="gradient-text-static">gefördert</span>?
+                    </h2>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                        <div class="anim card p-4 md:p-6 text-center group">
+                            <div class="w-14 h-14 md:w-20 md:h-20 mx-auto rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/10 border border-blue-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <iconify-icon icon="solar:buildings-2-bold-duotone" width="32" class="text-blue-400"></iconify-icon>
+                            </div>
+                            <h4 class="font-bold text-sm md:text-base mb-2">Gebäude</h4>
+                            <p class="text-xs text-slate-500">Neubau, Erweiterung, Kauf</p>
+                        </div>
+
+                        <div class="anim card p-4 md:p-6 text-center group">
+                            <div class="w-14 h-14 md:w-20 md:h-20 mx-auto rounded-2xl bg-gradient-to-br from-emerald-500/20 to-green-500/10 border border-emerald-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <iconify-icon icon="solar:cpu-bolt-bold-duotone" width="32" class="text-emerald-400"></iconify-icon>
+                            </div>
+                            <h4 class="font-bold text-sm md:text-base mb-2">Maschinen</h4>
+                            <p class="text-xs text-slate-500">Produktion & Anlagen</p>
+                        </div>
+
+                        <div class="anim card p-4 md:p-6 text-center group">
+                            <div class="w-14 h-14 md:w-20 md:h-20 mx-auto rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/10 border border-purple-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <iconify-icon icon="solar:monitor-bold-duotone" width="32" class="text-purple-400"></iconify-icon>
+                            </div>
+                            <h4 class="font-bold text-sm md:text-base mb-2">IT & Digital</h4>
+                            <p class="text-xs text-slate-500">Software & Infrastruktur</p>
+                        </div>
+
+                        <div class="anim card p-4 md:p-6 text-center group">
+                            <div class="w-14 h-14 md:w-20 md:h-20 mx-auto rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/10 border border-amber-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <iconify-icon icon="solar:sun-bold-duotone" width="32" class="text-amber-400"></iconify-icon>
+                            </div>
+                            <h4 class="font-bold text-sm md:text-base mb-2">Energie</h4>
+                            <p class="text-xs text-slate-500">PV, Speicher, Effizienz</p>
+                        </div>
+                    </div>
+
+                    <div class="anim mt-8 md:mt-12 warning-box p-5 md:p-6">
+                        <div class="flex items-start gap-4">
+                            <iconify-icon icon="solar:danger-triangle-bold" width="24" class="text-red-400 shrink-0 mt-0.5"></iconify-icon>
+                            <div>
+                                <h4 class="font-bold text-red-400 mb-2">Nicht gefördert:</h4>
+                                <p class="text-slate-400 text-sm">Reine Ersatzinvestitionen (alte Maschine gegen identische neue) oder Modernisierungen ohne wirtschaftlichen Wachstumseffekt.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SLIDE 6: ARBEITSPLÄTZE ==================== -->
+            <section class="slide h-full flex-col items-center justify-center px-6 md:px-16" data-chapter="Arbeitsplätze">
+                <div class="max-w-4xl mx-auto w-full text-center">
+                    <div class="anim mb-8">
+                        <div class="w-24 h-24 md:w-32 md:h-32 mx-auto rounded-full bg-gradient-to-br from-blue-500/20 to-cyan-500/10 border-2 border-blue-500/30 flex items-center justify-center ripple-container">
+                            <iconify-icon icon="solar:users-group-rounded-bold-duotone" width="48" class="md:hidden text-blue-400"></iconify-icon>
+                            <iconify-icon icon="solar:users-group-rounded-bold-duotone" width="64" class="hidden md:block text-blue-400"></iconify-icon>
+                            <div class="ripple" style="width: 100%; height: 100%;"></div>
+                            <div class="ripple" style="width: 100%; height: 100%; animation-delay: 0.5s;"></div>
+                        </div>
+                    </div>
+
+                    <h2 class="anim text-2xl md:text-4xl lg:text-5xl font-bold mb-6">
+                        Zentrale Voraussetzung:<br>
+                        <span class="gradient-text-static">Arbeitsplätze</span>
+                    </h2>
+
+                    <div class="anim grid md:grid-cols-2 gap-6 mt-10">
+                        <div class="success-box p-6 text-left">
+                            <div class="flex items-center gap-3 mb-4">
+                                <iconify-icon icon="solar:add-circle-bold" width="24" class="text-emerald-400"></iconify-icon>
+                                <h4 class="font-bold text-emerald-400">Neue Arbeitsplätze</h4>
+                            </div>
+                            <p class="text-slate-300">Durch die Investition müssen neue Arbeitsplätze entstehen.</p>
+                        </div>
+
+                        <div class="success-box p-6 text-left">
+                            <div class="flex items-center gap-3 mb-4">
+                                <iconify-icon icon="solar:shield-check-bold" width="24" class="text-emerald-400"></iconify-icon>
+                                <h4 class="font-bold text-emerald-400">Sicherung bestehender Jobs</h4>
+                            </div>
+                            <p class="text-slate-300">Oder bestehende Arbeitsplätze müssen langfristig gesichert werden.</p>
+                        </div>
+                    </div>
+
+                    <div class="anim mt-8 card p-6">
+                        <div class="flex items-center justify-center gap-3">
+                            <iconify-icon icon="solar:calendar-bold" width="24" class="text-blue-400"></iconify-icon>
+                            <span class="text-lg"><strong class="text-white">Mindestens 5 Jahre</strong> <span class="text-slate-400">müssen die Arbeitsplätze bestehen bleiben</span></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SLIDE 7: BRANCHEN ==================== -->
+            <section class="slide h-full flex-col items-center justify-center px-6 md:px-16" data-chapter="Förderfähige Branchen">
+                <div class="max-w-6xl mx-auto w-full">
+                    <h2 class="anim text-2xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-12">
+                        Welche <span class="gradient-text-static">Branchen</span> sind förderfähig?
+                    </h2>
+
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <!-- Positivliste -->
+                        <div class="anim card p-5 md:p-6">
+                            <div class="flex items-center gap-3 mb-5">
+                                <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                                    <iconify-icon icon="solar:check-circle-bold" width="20" class="text-emerald-400"></iconify-icon>
+                                </div>
+                                <h3 class="font-bold text-emerald-400">Positivliste</h3>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="industry-tag positive">Maschinenbau</span>
+                                <span class="industry-tag positive">IT-Services</span>
+                                <span class="industry-tag positive">Pharma</span>
+                                <span class="industry-tag positive">Chemie</span>
+                                <span class="industry-tag positive">Elektronik</span>
+                                <span class="industry-tag positive">Metallbau</span>
+                                <span class="industry-tag positive">Software</span>
+                                <span class="industry-tag positive">F&E</span>
+                            </div>
+                        </div>
+
+                        <!-- Bedingt -->
+                        <div class="anim card p-5 md:p-6">
+                            <div class="flex items-center gap-3 mb-5">
+                                <div class="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center">
+                                    <iconify-icon icon="solar:question-circle-bold" width="20" class="text-amber-400"></iconify-icon>
+                                </div>
+                                <h3 class="font-bold text-amber-400">Bedingt</h3>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="industry-tag conditional">Großhandel</span>
+                                <span class="industry-tag conditional">Logistik</span>
+                                <span class="industry-tag conditional">Druckerei</span>
+                                <span class="industry-tag conditional">Medien</span>
+                                <span class="industry-tag conditional">Marketing</span>
+                                <span class="industry-tag conditional">Ingenieure</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-4">Nachweis überregionaler Tätigkeit erforderlich</p>
+                        </div>
+
+                        <!-- Negativliste -->
+                        <div class="anim card p-5 md:p-6">
+                            <div class="flex items-center gap-3 mb-5">
+                                <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                                    <iconify-icon icon="solar:close-circle-bold" width="20" class="text-red-400"></iconify-icon>
+                                </div>
+                                <h3 class="font-bold text-red-400">Ausgeschlossen</h3>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="industry-tag negative">Einzelhandel</span>
+                                <span class="industry-tag negative">Baugewerbe</span>
+                                <span class="industry-tag negative">Finanzen</span>
+                                <span class="industry-tag negative">Immobilien</span>
+                                <span class="industry-tag negative">Landwirtschaft</span>
+                                <span class="industry-tag negative">Gesundheit</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SLIDE 8: RECHENBEISPIEL ==================== -->
+            <section class="slide h-full flex-col items-center justify-center px-6 md:px-16" data-chapter="Rechenbeispiel">
+                <div class="max-w-4xl mx-auto w-full">
+                    <h2 class="anim text-2xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-12">
+                        <span class="gradient-text-static">Beispielrechnung</span>
+                    </h2>
+
+                    <div class="anim calculator-display text-center mb-8">
+                        <p class="text-slate-400 text-sm mb-2">Mittelständisches Unternehmen in Bremen (D-Gebiet, 10%)</p>
+
+                        <div class="grid md:grid-cols-3 gap-6 mt-8">
+                            <div>
+                                <div class="text-slate-500 text-sm mb-1">Produktionshalle</div>
+                                <div class="text-2xl md:text-3xl font-bold">2 Mio €</div>
+                            </div>
+                            <div>
+                                <div class="text-slate-500 text-sm mb-1">Maschinen</div>
+                                <div class="text-2xl md:text-3xl font-bold">1 Mio €</div>
+                            </div>
+                            <div>
+                                <div class="text-slate-500 text-sm mb-1">Gesamt</div>
+                                <div class="text-2xl md:text-3xl font-bold text-blue-400">3 Mio €</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-8 border-t border-white/10">
+                            <div class="text-slate-400 mb-2">Förderquote: 10%</div>
+                            <div class="big-number gradient-text-static">300.000 €</div>
+                            <div class="text-emerald-400 font-medium mt-2">Staatlicher Zuschuss – nicht rückzahlbar!</div>
+                        </div>
+                    </div>
+
+                    <div class="anim grid md:grid-cols-3 gap-4 text-center">
+                        <div class="card p-4">
+                            <div class="text-3xl font-bold text-blue-400">1 Mio €</div>
+                            <div class="text-sm text-slate-500 mt-1">→ bis 450.000 €</div>
+                        </div>
+                        <div class="card p-4">
+                            <div class="text-3xl font-bold text-emerald-400">2 Mio €</div>
+                            <div class="text-sm text-slate-500 mt-1">→ bis 900.000 €</div>
+                        </div>
+                        <div class="card p-4">
+                            <div class="text-3xl font-bold text-purple-400">5 Mio €</div>
+                            <div class="text-sm text-slate-500 mt-1">→ bis 2,25 Mio €</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SLIDE 9: WICHTIGE REGEL ==================== -->
+            <section class="slide h-full flex-col items-center justify-center px-6 md:px-16" data-chapter="Wichtige Regel">
+                <div class="max-w-4xl mx-auto w-full">
+                    <div class="anim text-center mb-10">
+                        <div class="w-20 h-20 md:w-28 md:h-28 mx-auto rounded-full bg-gradient-to-br from-red-500/20 to-orange-500/10 border-2 border-red-500/40 flex items-center justify-center mb-6">
+                            <iconify-icon icon="solar:danger-triangle-bold-duotone" width="40" class="md:hidden text-red-400"></iconify-icon>
+                            <iconify-icon icon="solar:danger-triangle-bold-duotone" width="56" class="hidden md:block text-red-400"></iconify-icon>
+                        </div>
+                        <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold">
+                            <span class="text-red-400">Wichtigste Regel</span>
+                        </h2>
+                    </div>
+
+                    <div class="anim warning-box p-6 md:p-8 text-center mb-8">
+                        <h3 class="text-xl md:text-2xl font-bold text-white mb-4">
+                            Antrag VOR Projektbeginn stellen!
+                        </h3>
+                        <p class="text-slate-300">
+                            Wenn die Investition bereits begonnen wurde, ist die Förderung ausgeschlossen.
+                        </p>
+                    </div>
+
+                    <div class="anim space-y-4">
+                        <p class="text-slate-400 text-center mb-6">Als Projektbeginn gilt bereits:</p>
+
+                        <div class="timeline-item pb-6">
+                            <div class="card p-4 flex items-center gap-4">
+                                <iconify-icon icon="solar:cart-large-2-bold" width="24" class="text-red-400"></iconify-icon>
+                                <span>Bestellung von Maschinen</span>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item pb-6">
+                            <div class="card p-4 flex items-center gap-4">
+                                <iconify-icon icon="solar:document-text-bold" width="24" class="text-red-400"></iconify-icon>
+                                <span>Bauvertrag unterschreiben</span>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="card p-4 flex items-center gap-4">
+                                <iconify-icon icon="solar:hammer-bold" width="24" class="text-red-400"></iconify-icon>
+                                <span>Bauarbeiten starten</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SLIDE 10: FAZIT ==================== -->
+            <section class="slide h-full flex-col items-center justify-center px-6 md:px-16" data-chapter="Fazit">
+                <div class="max-w-4xl mx-auto w-full text-center">
+                    <h2 class="anim text-2xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12">
+                        GRW – Ihr <span class="gradient-text">Vorteil</span>
+                    </h2>
+
+                    <div class="anim grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-10">
+                        <div class="card p-4 md:p-6">
+                            <iconify-icon icon="solar:wallet-money-bold-duotone" width="32" class="text-blue-400 mb-3"></iconify-icon>
+                            <div class="font-bold text-sm">Nicht rückzahlbar</div>
+                        </div>
+                        <div class="card p-4 md:p-6">
+                            <iconify-icon icon="solar:graph-up-bold-duotone" width="32" class="text-emerald-400 mb-3"></iconify-icon>
+                            <div class="font-bold text-sm">Bis 45% Zuschuss</div>
+                        </div>
+                        <div class="card p-4 md:p-6">
+                            <iconify-icon icon="solar:map-point-bold-duotone" width="32" class="text-amber-400 mb-3"></iconify-icon>
+                            <div class="font-bold text-sm">Viele Regionen</div>
+                        </div>
+                        <div class="card p-4 md:p-6">
+                            <iconify-icon icon="solar:users-group-rounded-bold-duotone" width="32" class="text-purple-400 mb-3"></iconify-icon>
+                            <div class="font-bold text-sm">Job-Förderung</div>
+                        </div>
+                    </div>
+
+                    <div class="anim success-box p-6 md:p-8 mb-8">
+                        <h3 class="text-xl font-bold text-emerald-400 mb-4">Besonders interessant für Unternehmen, die:</h3>
+                        <div class="grid md:grid-cols-2 gap-4 text-left">
+                            <div class="flex items-center gap-3">
+                                <iconify-icon icon="solar:check-circle-bold" width="20" class="text-emerald-400"></iconify-icon>
+                                <span class="text-slate-300">Investieren oder expandieren wollen</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <iconify-icon icon="solar:check-circle-bold" width="20" class="text-emerald-400"></iconify-icon>
+                                <span class="text-slate-300">Neue Arbeitsplätze schaffen</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <iconify-icon icon="solar:check-circle-bold" width="20" class="text-emerald-400"></iconify-icon>
+                                <span class="text-slate-300">Im GRW-Fördergebiet sitzen</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <iconify-icon icon="solar:check-circle-bold" width="20" class="text-emerald-400"></iconify-icon>
+                                <span class="text-slate-300">Einer förderfähigen Branche angehören</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="anim">
+                        <a href="/#kontakt" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold rounded-xl transition-all transform hover:scale-105">
+                            <iconify-icon icon="solar:chat-round-call-bold" width="24"></iconify-icon>
+                            Jetzt Förderpotenzial prüfen
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <button id="prevBtn" class="nav-btn absolute left-2 md:left-6 bottom-4 md:top-1/2 md:-translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 z-20">
+            <iconify-icon icon="solar:arrow-left-linear" width="20" class="md:hidden"></iconify-icon>
+            <iconify-icon icon="solar:arrow-left-linear" width="24" class="hidden md:block"></iconify-icon>
+        </button>
+        <button id="nextBtn" class="nav-btn absolute right-2 md:right-6 bottom-4 md:top-1/2 md:-translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 z-20">
+            <iconify-icon icon="solar:arrow-right-linear" width="20" class="md:hidden"></iconify-icon>
+            <iconify-icon icon="solar:arrow-right-linear" width="24" class="hidden md:block"></iconify-icon>
+        </button>
+
+    </main>
+
+</div>
+
+<script>
+(function() {
+    const slides = document.querySelectorAll('.slide');
+    const chapterNav = document.getElementById('chapterNav');
+    const currentSlideEl = document.getElementById('currentSlide');
+    const totalSlidesEl = document.getElementById('totalSlides');
+    const currentSlideMobileEl = document.getElementById('currentSlideMobile');
+    const totalSlidesMobileEl = document.getElementById('totalSlidesMobile');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('mobileOverlay');
+
+    let currentIndex = 0;
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let touchStartY = 0;
+
+    // Create particles
+    function createParticles() {
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            particle.style.animationDuration = (5 + Math.random() * 5) + 's';
+            container.appendChild(particle);
+        }
+    }
+
+    function init() {
+        createParticles();
+        totalSlidesEl.textContent = slides.length;
+        totalSlidesMobileEl.textContent = slides.length;
+        buildChapterNav();
+        updateUI();
+        bindEvents();
+    }
+
+    function buildChapterNav() {
+        slides.forEach((slide, index) => {
+            const chapter = slide.dataset.chapter || `Folie ${index + 1}`;
+            const item = document.createElement('button');
+            item.className = 'chapter-item w-full flex items-center gap-3 px-4 py-3 rounded-r-lg text-left';
+            item.innerHTML = `
+                <span class="text-xs text-slate-600 w-5">${String(index + 1).padStart(2, '0')}</span>
+                <span class="chapter-title text-sm text-slate-400">${chapter}</span>
+            `;
+            item.addEventListener('click', () => {
+                goToSlide(index);
+                closeMobileMenu();
+            });
+            chapterNav.appendChild(item);
+        });
+    }
+
+    function goToSlide(index) {
+        if (index < 0 || index >= slides.length) return;
+        slides[currentIndex].classList.remove('active');
+        currentIndex = index;
+        slides[currentIndex].classList.add('active');
+        updateUI();
+    }
+
+    function updateUI() {
+        currentSlideEl.textContent = currentIndex + 1;
+        currentSlideMobileEl.textContent = currentIndex + 1;
+        const chapters = chapterNav.querySelectorAll('.chapter-item');
+        chapters.forEach((ch, i) => ch.classList.toggle('active', i === currentIndex));
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === slides.length - 1;
+    }
+
+    function nextSlide() { if (currentIndex < slides.length - 1) goToSlide(currentIndex + 1); }
+    function prevSlide() { if (currentIndex > 0) goToSlide(currentIndex - 1); }
+
+    window.toggleMobileMenu = function() {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+    }
+
+    function closeMobileMenu() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+    }
+
+    function handleTouchStart(e) {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }
+
+    function handleTouchEnd(e) {
+        if (e.target.closest('button, a, input, select')) return;
+
+        touchEndX = e.changedTouches[0].screenX;
+        const touchEndY = e.changedTouches[0].screenY;
+
+        const diffX = touchStartX - touchEndX;
+        const diffY = Math.abs(touchStartY - touchEndY);
+
+        if (Math.abs(diffX) > 50 && diffY < 100) {
+            if (diffX > 0) nextSlide();
+            else prevSlide();
+        }
+        else if (Math.abs(diffX) < 20 && diffY < 20) {
+            const screenWidth = window.innerWidth;
+            if (touchStartX > screenWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        }
+    }
+
+    function bindEvents() {
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+        });
+
+        const slidesContainer = document.getElementById('slidesContainer');
+        slidesContainer.addEventListener('touchstart', handleTouchStart, false);
+        slidesContainer.addEventListener('touchend', handleTouchEnd, false);
+
+        slidesContainer.addEventListener('click', (e) => {
+            if (e.target.closest('button, a, input, select')) return;
+
+            const rect = slidesContainer.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const halfWidth = rect.width / 2;
+
+            if (clickX > halfWidth) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+    }
+
+    init();
+})();
+</script>
+
+</body>
+</html>
