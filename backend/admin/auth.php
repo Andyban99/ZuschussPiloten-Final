@@ -74,19 +74,10 @@ function doLogin($username, $password) {
         // Temporäre Lösung: Hash bei erstem Aufruf generieren
         $storedHash = ADMIN_PASS_HASH;
 
-        // Wenn der Hash mit '$2y$' beginnt, ist es ein bcrypt Hash
-        if (strpos($storedHash, '$2y$') === 0) {
-            if (password_verify($password, $storedHash)) {
-                setAdminSession($username, 'Super Admin');
-                return true;
-            }
-        } else {
-            // Fallback: Direkter Vergleich (nur für Entwicklung!)
-            // WARNUNG: Dies ist unsicher und sollte in Produktion entfernt werden
-            if ($password === 'Freunde999...') {
-                setAdminSession($username, 'Super Admin');
-                return true;
-            }
+        // Sicherer Passwort-Vergleich mit bcrypt
+        if (password_verify($password, $storedHash)) {
+            setAdminSession($username, 'Super Admin');
+            return true;
         }
     }
 

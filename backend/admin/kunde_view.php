@@ -27,6 +27,12 @@ if (!$kunde) {
 
 // Status ändern
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    // CSRF-Token validieren
+    if (!validateCSRFToken($_POST[CSRF_TOKEN_NAME] ?? '')) {
+        logSecurityEvent('csrf_validation_failed', ['page' => 'kunde_view.php', 'id' => $id]);
+        die('Ungültige Anfrage');
+    }
+
     if ($_POST['action'] === 'toggle_status') {
         $newStatus = $kunde['aktiv'] ? 0 : 1;
         $stmt = $db->prepare("UPDATE kunden SET aktiv = :aktiv WHERE id = :id");
@@ -138,6 +144,7 @@ if (!empty($kunde['investitionsgueter'])) {
                 </div>
                 <div class="flex items-center gap-3">
                     <form method="POST" class="inline">
+                        <?= csrfField() ?>
                         <input type="hidden" name="action" value="toggle_status">
                         <button type="submit" class="px-4 py-2.5 <?= $kunde['aktiv'] ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' ?> rounded-xl text-sm font-medium transition-colors flex items-center gap-2">
                             <iconify-icon icon="<?= $kunde['aktiv'] ? 'solar:close-circle-bold' : 'solar:check-circle-bold' ?>" width="18"></iconify-icon>

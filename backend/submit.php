@@ -55,6 +55,10 @@ if (!empty($input['website']) || !empty($input['url']) || !empty($input['fax']))
 // Zeitstempel-Check (Formular zu schnell ausgefüllt = Bot)
 if (isset($input['_timestamp'])) {
     $formTime = intval($input['_timestamp']);
+    // JavaScript Date.now() sendet Millisekunden - zu Sekunden konvertieren
+    if ($formTime > 9999999999) {
+        $formTime = intval($formTime / 1000);
+    }
     $currentTime = time();
     if ($currentTime - $formTime < 3) { // Weniger als 3 Sekunden = verdächtig
         logSecurityEvent('form_too_fast', ['ip' => $clientIP, 'time' => $currentTime - $formTime]);
@@ -130,8 +134,8 @@ try {
     $db = getDB();
 
     $stmt = $db->prepare("
-        INSERT INTO anfragen (name, unternehmen, email, telefon, nachricht, ip_adresse, user_agent, erstellt_am)
-        VALUES (:name, :unternehmen, :email, :telefon, :nachricht, :ip, :ua, NOW())
+        INSERT INTO anfragen (name, unternehmen, email, telefon, nachricht, erstellt_am)
+        VALUES (:name, :unternehmen, :email, :telefon, :nachricht, NOW())
     ");
 
     $stmt->execute([
@@ -139,9 +143,7 @@ try {
         ':unternehmen' => $unternehmen,
         ':email' => $email,
         ':telefon' => $telefon,
-        ':nachricht' => $nachricht,
-        ':ip' => $clientIP,
-        ':ua' => substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255)
+        ':nachricht' => $nachricht
     ]);
 
     $anfrageId = $db->lastInsertId();

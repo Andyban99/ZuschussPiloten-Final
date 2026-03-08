@@ -4,9 +4,12 @@
  *
  * Automatisches Tracking:
  * - Seitenaufrufe
- * - CTA-Button Klicks
+ * - CTA-Button Klicks (ohne Formular-Submits)
+ * - Formular-Absendungen (separat)
+ * - Kunden-Login Klicks (separat)
  * - Telefon/E-Mail Links
  * - Scroll-Tiefe (25%, 50%, 75%, 100%)
+ * - Verweildauer auf der Seite
  *
  * Manuelles Tracking via: window.ZPTracker.track(eventName, category, value)
  */
@@ -24,7 +27,8 @@
     // Zustand
     var state = {
         scrollTracked: {},
-        pageStartTime: Date.now()
+        pageStartTime: Date.now(),
+        timeOnPageSent: false
     };
 
     /**
@@ -51,11 +55,21 @@
     }
 
     /**
+     * Seiten-Pfad normalisieren (index.html → /)
+     */
+    function normalizePath(path) {
+        // /index.html → /
+        if (path === '/index.html') return '/';
+        // /seite/index.html → /seite/
+        return path.replace(/\/index\.html$/, '/');
+    }
+
+    /**
      * Basis-Informationen für alle Requests
      */
     function getBaseData() {
         return {
-            page: window.location.pathname,
+            page: normalizePath(window.location.pathname),
             referrer: document.referrer || '',
             screen_width: window.screen.width,
             screen_height: window.screen.height,
@@ -76,10 +90,10 @@
     /**
      * Event tracken
      */
-    function trackEvent(eventName, category, value, elementInfo) {
+    function trackEvent(eventName, category, value, elementInfo, eventType) {
         var data = getBaseData();
         data.type = 'event';
-        data.event_type = 'click';
+        data.event_type = eventType || 'click';
         data.event_name = eventName;
         data.category = category || '';
         data.value = value || '';
@@ -127,10 +141,75 @@
     }
 
     /**
-     * CTA-Element erkennen
+     * Submit-Button erkennen (Formular absenden)
+     */
+    function isSubmitButton(el) {
+        if (!el) return false;
+
+        var tagName = el.tagName.toLowerCase();
+        var type = (el.getAttribute('type') || '').toLowerCase();
+        var text = (el.innerText || '').toLowerCase();
+        var classes = (el.className || '').toLowerCase();
+
+        // Input type="submit"
+        if (tagName === 'input' && type === 'submit') {
+            return true;
+        }
+
+        // Button type="submit" oder ohne type in einem Form
+        if (tagName === 'button') {
+            if (type === 'submit') return true;
+            if (!type && el.closest && el.closest('form')) return true;
+        }
+
+        // Button mit "absenden", "senden", "anfrage" im Text
+        if (/absenden|senden|anfrage\s+senden|jetzt\s+anfragen|formular/i.test(text)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Kunden-Login Link erkennen
+     */
+    function isLoginLink(el) {
+        if (!el) return false;
+
+        var tagName = el.tagName.toLowerCase();
+        var href = (el.getAttribute('href') || '').toLowerCase();
+        var text = (el.innerText || '').toLowerCase();
+        var id = (el.id || '').toLowerCase();
+
+        if (tagName === 'a') {
+            // Link zum Kundenportal
+            if (href.includes('kunde/login') || href.includes('kundenportal')) {
+                return true;
+            }
+            // ID enthält "kunden-login"
+            if (id.includes('kunden-login') || id.includes('kunde-login')) {
+                return true;
+            }
+            // Text enthält "Kunden Login"
+            if (/kunden\s*login|kundenbereich|mein\s*konto/i.test(text)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * CTA-Element erkennen (OHNE Submit-Buttons und Login)
      */
     function isCTAElement(el) {
         if (!el) return false;
+
+        // Keine Submit-Buttons als CTA zählen
+        if (isSubmitButton(el)) return false;
+
+        // Keine Login-Links als CTA zählen
+        if (isLoginLink(el)) return false;
 
         var tagName = el.tagName.toLowerCase();
         var classes = (el.className || '').toLowerCase();
@@ -221,6 +300,23 @@
         var depth = 0;
 
         while (el && depth < maxDepth) {
+            // Formular Submit-Button (höchste Priorität)
+            if (isSubmitButton(el)) {
+                var formName = 'Kontaktformular';
+                var form = el.closest ? el.closest('form') : null;
+                if (form) {
+                    formName = form.getAttribute('data-form-name') || form.id || 'Kontaktformular';
+                }
+                trackEvent('formular_absenden', 'formular', formName, getElementInfo(el), 'submit');
+                return;
+            }
+
+            // Kunden-Login Link
+            if (isLoginLink(el)) {
+                trackEvent('kunden_login_klick', 'login', window.location.pathname, getElementInfo(el));
+                return;
+            }
+
             // Telefon-Link
             if (isPhoneLink(el)) {
                 trackEvent('phone_click', 'telefon', el.getAttribute('href'), getElementInfo(el));
@@ -233,7 +329,7 @@
                 return;
             }
 
-            // CTA-Button
+            // CTA-Button (ohne Submit und Login)
             if (isCTAElement(el)) {
                 var ctaName = el.getAttribute('data-track') || el.innerText.trim().substring(0, 50);
                 trackEvent('cta_click', 'cta', ctaName, getElementInfo(el));
@@ -252,19 +348,36 @@
     }
 
     /**
-     * Verweildauer tracken beim Verlassen
+     * Verweildauer tracken beim Verlassen (nur einmal senden)
      */
     function trackTimeOnPage() {
+        if (state.timeOnPageSent) return;
+        state.timeOnPageSent = true;
+
         var timeSpent = Math.round((Date.now() - state.pageStartTime) / 1000);
+
+        // Nur tracken wenn mindestens 3 Sekunden auf der Seite
+        if (timeSpent < 3) return;
 
         var data = getBaseData();
         data.type = 'event';
         data.event_type = 'engagement';
         data.event_name = 'time_on_page';
-        data.category = 'engagement';
+        data.category = 'verweildauer';
         data.value = timeSpent.toString();
 
         sendData(data);
+    }
+
+    /**
+     * Formular-Submit Handler
+     */
+    function handleFormSubmit(e) {
+        var form = e.target;
+        if (form && form.tagName && form.tagName.toLowerCase() === 'form') {
+            var formName = form.getAttribute('data-form-name') || form.id || 'Kontaktformular';
+            trackEvent('formular_absenden', 'formular', formName, null, 'submit');
+        }
     }
 
     /**
@@ -278,6 +391,9 @@
         document.addEventListener('click', handleClick, { passive: true });
         window.addEventListener('scroll', handleScroll, { passive: true });
 
+        // Formular-Submits abfangen
+        document.addEventListener('submit', handleFormSubmit, { passive: true });
+
         // Verweildauer beim Verlassen
         window.addEventListener('beforeunload', trackTimeOnPage);
 
@@ -287,6 +403,20 @@
                 trackTimeOnPage();
             }
         });
+
+        // Verweildauer auch nach 30 Sekunden senden (falls Seite offen bleibt)
+        setTimeout(function() {
+            if (!state.timeOnPageSent) {
+                var timeSpent = Math.round((Date.now() - state.pageStartTime) / 1000);
+                var data = getBaseData();
+                data.type = 'event';
+                data.event_type = 'engagement';
+                data.event_name = 'time_on_page';
+                data.category = 'verweildauer';
+                data.value = timeSpent.toString();
+                sendData(data);
+            }
+        }, 30000);
     }
 
     /**
@@ -295,9 +425,6 @@
     window.ZPTracker = {
         /**
          * Manuelles Event-Tracking
-         * @param {string} eventName - Name des Events
-         * @param {string} category - Kategorie (optional)
-         * @param {string} value - Zusätzlicher Wert (optional)
          */
         track: function(eventName, category, value) {
             trackEvent(eventName, category || 'custom', value || '');
@@ -305,15 +432,13 @@
 
         /**
          * Formular-Submit tracken
-         * @param {string} formName - Name des Formulars
          */
         trackForm: function(formName) {
-            trackEvent('form_submit', 'form', formName);
+            trackEvent('formular_absenden', 'formular', formName, null, 'submit');
         },
 
         /**
          * Download tracken
-         * @param {string} fileName - Name der Datei
          */
         trackDownload: function(fileName) {
             trackEvent('download', 'download', fileName);
@@ -321,8 +446,6 @@
 
         /**
          * Video-Event tracken
-         * @param {string} action - play, pause, complete
-         * @param {string} videoName - Name des Videos
          */
         trackVideo: function(action, videoName) {
             trackEvent('video_' + action, 'video', videoName);

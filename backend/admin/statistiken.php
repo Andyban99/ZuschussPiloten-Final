@@ -19,66 +19,76 @@ if (!in_array($zeitraum, $validZeitraeume)) {
 $startDatum = date('Y-m-d', strtotime("-{$zeitraum} days"));
 $heute = date('Y-m-d');
 
-// ========== KPI-Daten laden ==========
+// ========== KPI-Daten laden (echte unique Personen aus pageviews) ==========
 
-// Heute
+// Heute - Echte unique Personen (basierend auf besucher_hash)
 $stmtHeute = $db->prepare("
     SELECT
-        COALESCE(SUM(besucher_unique), 0) as besucher,
-        COALESCE(SUM(seitenaufrufe), 0) as aufrufe
-    FROM tracking_daily_stats
-    WHERE datum = :heute
+        COUNT(DISTINCT besucher_hash) as personen,
+        COUNT(*) as aufrufe
+    FROM tracking_pageviews
+    WHERE DATE(erstellt_am) = :heute
 ");
 $stmtHeute->execute([':heute' => $heute]);
 $kpiHeute = $stmtHeute->fetch();
+$kpiHeute['personen'] = $kpiHeute['personen'] ?? 0;
+$kpiHeute['aufrufe'] = $kpiHeute['aufrufe'] ?? 0;
 
-// Diese Woche
+// Diese Woche - Echte unique Personen
 $wochenStart = date('Y-m-d', strtotime('monday this week'));
 $stmtWoche = $db->prepare("
     SELECT
-        COALESCE(SUM(besucher_unique), 0) as besucher,
-        COALESCE(SUM(seitenaufrufe), 0) as aufrufe
-    FROM tracking_daily_stats
-    WHERE datum >= :start
+        COUNT(DISTINCT besucher_hash) as personen,
+        COUNT(*) as aufrufe
+    FROM tracking_pageviews
+    WHERE DATE(erstellt_am) >= :start
 ");
 $stmtWoche->execute([':start' => $wochenStart]);
 $kpiWoche = $stmtWoche->fetch();
+$kpiWoche['personen'] = $kpiWoche['personen'] ?? 0;
+$kpiWoche['aufrufe'] = $kpiWoche['aufrufe'] ?? 0;
 
-// Dieser Monat
+// Dieser Monat - Echte unique Personen
 $monatsStart = date('Y-m-01');
 $stmtMonat = $db->prepare("
     SELECT
-        COALESCE(SUM(besucher_unique), 0) as besucher,
-        COALESCE(SUM(seitenaufrufe), 0) as aufrufe
-    FROM tracking_daily_stats
-    WHERE datum >= :start
+        COUNT(DISTINCT besucher_hash) as personen,
+        COUNT(*) as aufrufe
+    FROM tracking_pageviews
+    WHERE DATE(erstellt_am) >= :start
 ");
 $stmtMonat->execute([':start' => $monatsStart]);
 $kpiMonat = $stmtMonat->fetch();
+$kpiMonat['personen'] = $kpiMonat['personen'] ?? 0;
+$kpiMonat['aufrufe'] = $kpiMonat['aufrufe'] ?? 0;
 
-// Seiten pro Besuch (Durchschnitt im Zeitraum)
-$stmtSeitenProBesuch = $db->prepare("
+// Gesamt im Zeitraum - Echte unique Personen
+$stmtGesamt = $db->prepare("
     SELECT
-        CASE
-            WHEN SUM(besucher_unique) > 0
-            THEN ROUND(SUM(seitenaufrufe) / SUM(besucher_unique), 1)
-            ELSE 0
-        END as seiten_pro_besuch
-    FROM tracking_daily_stats
-    WHERE datum >= :start
+        COUNT(DISTINCT besucher_hash) as personen,
+        COUNT(*) as aufrufe
+    FROM tracking_pageviews
+    WHERE DATE(erstellt_am) >= :start
 ");
-$stmtSeitenProBesuch->execute([':start' => $startDatum]);
-$seitenProBesuch = $stmtSeitenProBesuch->fetchColumn() ?: 0;
+$stmtGesamt->execute([':start' => $startDatum]);
+$kpiGesamt = $stmtGesamt->fetch();
+$kpiGesamt['personen'] = $kpiGesamt['personen'] ?? 0;
+$kpiGesamt['aufrufe'] = $kpiGesamt['aufrufe'] ?? 0;
 
-// ========== Besucherverlauf (Chart-Daten) ==========
+// Seiten pro Person (Durchschnitt im Zeitraum)
+$seitenProBesuch = $kpiGesamt['personen'] > 0
+    ? round($kpiGesamt['aufrufe'] / $kpiGesamt['personen'], 1)
+    : 0;
+
+// ========== Besucherverlauf (Chart-Daten) - Echte unique Personen pro Tag ==========
 $stmtVerlauf = $db->prepare("
     SELECT
-        datum,
-        SUM(besucher_unique) as besucher,
-        SUM(seitenaufrufe) as aufrufe
-    FROM tracking_daily_stats
-    WHERE datum >= :start
-    GROUP BY datum
+        DATE(erstellt_am) as datum,
+        COUNT(DISTINCT besucher_hash) as personen,
+        COUNT(*) as aufrufe
+    FROM tracking_pageviews
+    WHERE DATE(erstellt_am) >= :start
+    GROUP BY DATE(erstellt_am)
     ORDER BY datum ASC
 ");
 $stmtVerlauf->execute([':start' => $startDatum]);
@@ -86,7 +96,7 @@ $verlaufDaten = $stmtVerlauf->fetchAll();
 
 // Alle Tage im Zeitraum füllen (auch ohne Daten)
 $chartLabels = [];
-$chartBesucher = [];
+$chartPersonen = [];
 $chartAufrufe = [];
 $verlaufIndex = [];
 foreach ($verlaufDaten as $row) {
@@ -96,53 +106,57 @@ foreach ($verlaufDaten as $row) {
 for ($i = $zeitraum; $i >= 0; $i--) {
     $d = date('Y-m-d', strtotime("-{$i} days"));
     $chartLabels[] = date('d.m.', strtotime($d));
-    $chartBesucher[] = isset($verlaufIndex[$d]) ? intval($verlaufIndex[$d]['besucher']) : 0;
+    $chartPersonen[] = isset($verlaufIndex[$d]) ? intval($verlaufIndex[$d]['personen']) : 0;
     $chartAufrufe[] = isset($verlaufIndex[$d]) ? intval($verlaufIndex[$d]['aufrufe']) : 0;
 }
 
-// ========== Geräte-Verteilung ==========
+// ========== Geräte-Verteilung (echte Personen) ==========
 $stmtGeraete = $db->prepare("
     SELECT
-        COALESCE(SUM(desktop_besuche), 0) as desktop,
-        COALESCE(SUM(tablet_besuche), 0) as tablet,
-        COALESCE(SUM(mobile_besuche), 0) as mobile
-    FROM tracking_daily_stats
-    WHERE datum >= :start
+        geraetetyp,
+        COUNT(DISTINCT besucher_hash) as personen
+    FROM tracking_pageviews
+    WHERE DATE(erstellt_am) >= :start
+    GROUP BY geraetetyp
 ");
 $stmtGeraete->execute([':start' => $startDatum]);
-$geraete = $stmtGeraete->fetch();
+$geraeteRaw = $stmtGeraete->fetchAll();
+$geraete = ['desktop' => 0, 'tablet' => 0, 'mobile' => 0];
+foreach ($geraeteRaw as $g) {
+    $geraete[$g['geraetetyp']] = intval($g['personen']);
+}
 $geraeteGesamt = $geraete['desktop'] + $geraete['tablet'] + $geraete['mobile'];
 
-// ========== Top-Seiten ==========
+// ========== Top-Seiten (echte Personen) ==========
 $stmtSeiten = $db->prepare("
     SELECT
         seite,
-        SUM(seitenaufrufe) as aufrufe,
-        SUM(besucher_unique) as besucher
-    FROM tracking_daily_stats
-    WHERE datum >= :start
+        COUNT(*) as aufrufe,
+        COUNT(DISTINCT besucher_hash) as personen
+    FROM tracking_pageviews
+    WHERE DATE(erstellt_am) >= :start
     GROUP BY seite
-    ORDER BY aufrufe DESC
+    ORDER BY personen DESC
     LIMIT 10
 ");
 $stmtSeiten->execute([':start' => $startDatum]);
 $topSeiten = $stmtSeiten->fetchAll();
 
-// ========== Top-Referrer ==========
+// ========== Top-Referrer (echte Personen) ==========
 $stmtReferrer = $db->prepare("
     SELECT
         referrer_domain,
-        SUM(besuche) as besuche
-    FROM tracking_referrer_stats
-    WHERE datum >= :start AND referrer_domain IS NOT NULL
+        COUNT(DISTINCT besucher_hash) as personen
+    FROM tracking_pageviews
+    WHERE DATE(erstellt_am) >= :start AND referrer_domain IS NOT NULL
     GROUP BY referrer_domain
-    ORDER BY besuche DESC
+    ORDER BY personen DESC
     LIMIT 10
 ");
 $stmtReferrer->execute([':start' => $startDatum]);
 $topReferrer = $stmtReferrer->fetchAll();
 
-// ========== Top-Events (Klicks) ==========
+// ========== Top-Klicks (alle Events inkl. Formulare und Login) ==========
 $stmtEvents = $db->prepare("
     SELECT
         event_name,
@@ -150,7 +164,7 @@ $stmtEvents = $db->prepare("
         COUNT(*) as anzahl
     FROM tracking_events
     WHERE DATE(erstellt_am) >= :start
-        AND event_typ = 'click'
+        AND (event_typ = 'click' OR event_typ = 'submit')
     GROUP BY event_name, event_kategorie
     ORDER BY anzahl DESC
     LIMIT 10
@@ -158,19 +172,83 @@ $stmtEvents = $db->prepare("
 $stmtEvents->execute([':start' => $startDatum]);
 $topEvents = $stmtEvents->fetchAll();
 
-// ========== Browser-Statistiken ==========
+// Gesamt Formulare im Zeitraum (für KPI)
+$stmtFormularGesamt = $db->prepare("
+    SELECT COUNT(*) as anzahl
+    FROM tracking_events
+    WHERE DATE(erstellt_am) >= :start
+        AND (event_kategorie = 'formular' OR event_typ = 'submit')
+");
+$stmtFormularGesamt->execute([':start' => $startDatum]);
+$formularGesamt = $stmtFormularGesamt->fetch()['anzahl'] ?? 0;
+
+// Kunden-Login Klicks (für KPI)
+$stmtLogin = $db->prepare("
+    SELECT COUNT(*) as anzahl
+    FROM tracking_events
+    WHERE DATE(erstellt_am) >= :start
+        AND event_kategorie = 'login'
+");
+$stmtLogin->execute([':start' => $startDatum]);
+$loginKlicks = $stmtLogin->fetch()['anzahl'] ?? 0;
+
+// ========== Durchschnittliche Verweildauer ==========
+$stmtVerweildauer = $db->prepare("
+    SELECT AVG(CAST(event_wert AS UNSIGNED)) as avg_sekunden
+    FROM tracking_events
+    WHERE DATE(erstellt_am) >= :start
+        AND event_name = 'time_on_page'
+        AND event_wert IS NOT NULL
+        AND event_wert REGEXP '^[0-9]+$'
+");
+$stmtVerweildauer->execute([':start' => $startDatum]);
+$avgVerweildauer = $stmtVerweildauer->fetch()['avg_sekunden'] ?? 0;
+$avgVerweildauerFormatted = $avgVerweildauer > 0
+    ? sprintf('%d:%02d', floor($avgVerweildauer / 60), $avgVerweildauer % 60)
+    : '0:00';
+
+// ========== Browser-Statistiken (echte Personen) ==========
 $stmtBrowser = $db->prepare("
     SELECT
         browser,
-        SUM(besuche) as besuche
-    FROM tracking_browser_stats
-    WHERE datum >= :start
+        COUNT(DISTINCT besucher_hash) as personen
+    FROM tracking_pageviews
+    WHERE DATE(erstellt_am) >= :start AND browser IS NOT NULL
     GROUP BY browser
-    ORDER BY besuche DESC
+    ORDER BY personen DESC
     LIMIT 5
 ");
 $stmtBrowser->execute([':start' => $startDatum]);
 $browserStats = $stmtBrowser->fetchAll();
+
+// ========== Standort-Statistiken (echte Personen) ==========
+$stmtStandorte = $db->prepare("
+    SELECT
+        land,
+        region,
+        COUNT(DISTINCT besucher_hash) as personen
+    FROM tracking_pageviews
+    WHERE DATE(erstellt_am) >= :start AND land IS NOT NULL
+    GROUP BY land, region
+    ORDER BY personen DESC
+    LIMIT 10
+");
+$stmtStandorte->execute([':start' => $startDatum]);
+$standortStats = $stmtStandorte->fetchAll();
+
+// Top-Länder (echte Personen aggregiert)
+$stmtLaender = $db->prepare("
+    SELECT
+        land,
+        COUNT(DISTINCT besucher_hash) as personen
+    FROM tracking_pageviews
+    WHERE DATE(erstellt_am) >= :start AND land IS NOT NULL
+    GROUP BY land
+    ORDER BY personen DESC
+    LIMIT 5
+");
+$stmtLaender->execute([':start' => $startDatum]);
+$laenderStats = $stmtLaender->fetchAll();
 
 // Status-Statistiken für Sidebar Badge
 $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as neu FROM anfragen WHERE status != 'archiviert'")->fetch();
@@ -190,6 +268,8 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
     <style>
         body { font-family: 'Inter', sans-serif; }
         .sidebar { background: linear-gradient(180deg, #0B1120 0%, #1e293b 100%); }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .reload-spin { animation: spin 0.8s linear infinite; }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
@@ -273,6 +353,13 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
                     <p class="text-slate-500">Website-Analyse & Besucherdaten</p>
                 </div>
                 <div class="flex items-center gap-3">
+                    <!-- Reload Button -->
+                    <button onclick="document.getElementById('reloadIcon').classList.add('reload-spin'); setTimeout(() => window.location.reload(), 300);"
+                            class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
+                            title="Statistiken neu laden">
+                        <iconify-icon icon="solar:refresh-bold" width="18" id="reloadIcon"></iconify-icon>
+                        <span class="text-sm font-medium">Aktualisieren</span>
+                    </button>
                     <!-- Zeitraum Filter -->
                     <div class="flex bg-white border border-slate-200 rounded-xl p-1">
                         <?php foreach ($validZeitraeume as $z): ?>
@@ -291,15 +378,18 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
                 <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                            <iconify-icon icon="solar:calendar-bold" width="24" class="text-blue-600"></iconify-icon>
+                            <iconify-icon icon="solar:users-group-rounded-bold" width="24" class="text-blue-600"></iconify-icon>
                         </div>
                         <div>
-                            <span class="block text-2xl font-bold text-slate-900"><?= number_format($kpiHeute['besucher']) ?></span>
-                            <span class="block text-sm text-slate-500">Heute</span>
+                            <span class="block text-2xl font-bold text-slate-900"><?= number_format($kpiHeute['personen']) ?></span>
+                            <span class="block text-sm text-slate-500">Personen heute</span>
                         </div>
                     </div>
-                    <div class="mt-3 text-xs text-slate-400">
-                        <?= number_format($kpiHeute['aufrufe']) ?> Seitenaufrufe
+                    <div class="mt-3 flex items-center gap-2 text-xs">
+                        <span class="text-slate-400"><?= number_format($kpiHeute['aufrufe']) ?> Seitenaufrufe</span>
+                        <?php if ($kpiHeute['personen'] > 0): ?>
+                        <span class="text-blue-500">(<?= round($kpiHeute['aufrufe'] / $kpiHeute['personen'], 1) ?> pro Person)</span>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -307,15 +397,18 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
                 <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                            <iconify-icon icon="solar:calendar-mark-bold" width="24" class="text-indigo-600"></iconify-icon>
+                            <iconify-icon icon="solar:users-group-rounded-bold" width="24" class="text-indigo-600"></iconify-icon>
                         </div>
                         <div>
-                            <span class="block text-2xl font-bold text-slate-900"><?= number_format($kpiWoche['besucher']) ?></span>
-                            <span class="block text-sm text-slate-500">Diese Woche</span>
+                            <span class="block text-2xl font-bold text-slate-900"><?= number_format($kpiWoche['personen']) ?></span>
+                            <span class="block text-sm text-slate-500">Personen diese Woche</span>
                         </div>
                     </div>
-                    <div class="mt-3 text-xs text-slate-400">
-                        <?= number_format($kpiWoche['aufrufe']) ?> Seitenaufrufe
+                    <div class="mt-3 flex items-center gap-2 text-xs">
+                        <span class="text-slate-400"><?= number_format($kpiWoche['aufrufe']) ?> Seitenaufrufe</span>
+                        <?php if ($kpiWoche['personen'] > 0): ?>
+                        <span class="text-indigo-500">(<?= round($kpiWoche['aufrufe'] / $kpiWoche['personen'], 1) ?> pro Person)</span>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -323,15 +416,18 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
                 <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                            <iconify-icon icon="solar:calendar-minimalistic-bold" width="24" class="text-emerald-600"></iconify-icon>
+                            <iconify-icon icon="solar:users-group-rounded-bold" width="24" class="text-emerald-600"></iconify-icon>
                         </div>
                         <div>
-                            <span class="block text-2xl font-bold text-slate-900"><?= number_format($kpiMonat['besucher']) ?></span>
-                            <span class="block text-sm text-slate-500">Dieser Monat</span>
+                            <span class="block text-2xl font-bold text-slate-900"><?= number_format($kpiMonat['personen']) ?></span>
+                            <span class="block text-sm text-slate-500">Personen diesen Monat</span>
                         </div>
                     </div>
-                    <div class="mt-3 text-xs text-slate-400">
-                        <?= number_format($kpiMonat['aufrufe']) ?> Seitenaufrufe
+                    <div class="mt-3 flex items-center gap-2 text-xs">
+                        <span class="text-slate-400"><?= number_format($kpiMonat['aufrufe']) ?> Seitenaufrufe</span>
+                        <?php if ($kpiMonat['personen'] > 0): ?>
+                        <span class="text-emerald-500">(<?= round($kpiMonat['aufrufe'] / $kpiMonat['personen'], 1) ?> pro Person)</span>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -348,6 +444,76 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
                     </div>
                     <div class="mt-3 text-xs text-slate-400">
                         Durchschnitt (<?= $zeitraum ?> Tage)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conversion KPI Cards -->
+            <div class="grid grid-cols-4 gap-6 mb-8">
+                <!-- Formular-Absendungen -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                            <iconify-icon icon="solar:document-add-bold" width="24" class="text-purple-600"></iconify-icon>
+                        </div>
+                        <div>
+                            <span class="block text-2xl font-bold text-slate-900"><?= number_format($formularGesamt) ?></span>
+                            <span class="block text-sm text-slate-500">Formular-Absendungen</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-xs text-slate-400">
+                        Im gewählten Zeitraum
+                    </div>
+                </div>
+
+                <!-- Kunden-Login Klicks -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center">
+                            <iconify-icon icon="solar:login-2-bold" width="24" class="text-cyan-600"></iconify-icon>
+                        </div>
+                        <div>
+                            <span class="block text-2xl font-bold text-slate-900"><?= number_format($loginKlicks) ?></span>
+                            <span class="block text-sm text-slate-500">Kunden-Login Klicks</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-xs text-slate-400">
+                        Im gewählten Zeitraum
+                    </div>
+                </div>
+
+                <!-- Durchschn. Verweildauer -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center">
+                            <iconify-icon icon="solar:clock-circle-bold" width="24" class="text-rose-600"></iconify-icon>
+                        </div>
+                        <div>
+                            <span class="block text-2xl font-bold text-slate-900"><?= $avgVerweildauerFormatted ?></span>
+                            <span class="block text-sm text-slate-500">Ø Verweildauer</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-xs text-slate-400">
+                        Minuten:Sekunden
+                    </div>
+                </div>
+
+                <!-- Conversion Rate -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                            <iconify-icon icon="solar:chart-square-bold" width="24" class="text-teal-600"></iconify-icon>
+                        </div>
+                        <div>
+                            <?php
+                            $conversionRate = $kpiGesamt['personen'] > 0 ? ($formularGesamt / $kpiGesamt['personen']) * 100 : 0;
+                            ?>
+                            <span class="block text-2xl font-bold text-slate-900"><?= number_format($conversionRate, 1) ?>%</span>
+                            <span class="block text-sm text-slate-500">Conversion Rate</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-xs text-slate-400">
+                        Formulare / Besucher
                     </div>
                 </div>
             </div>
@@ -428,7 +594,7 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
                                     <?= number_format($seite['aufrufe']) ?>
                                 </td>
                                 <td class="px-6 py-3 text-sm text-right text-slate-500">
-                                    <?= number_format($seite['besucher']) ?>
+                                    <?= number_format($seite['personen']) ?>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -451,7 +617,7 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
                         <thead class="bg-slate-50 text-left text-xs text-slate-500">
                             <tr>
                                 <th class="px-6 py-3 font-medium">Quelle</th>
-                                <th class="px-6 py-3 font-medium text-right">Besuche</th>
+                                <th class="px-6 py-3 font-medium text-right">Personen</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
@@ -461,7 +627,7 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
                                     <span class="text-slate-700"><?= e($ref['referrer_domain']) ?></span>
                                 </td>
                                 <td class="px-6 py-3 text-sm text-right font-medium text-slate-900">
-                                    <?= number_format($ref['besuche']) ?>
+                                    <?= number_format($ref['personen']) ?>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -473,10 +639,10 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
 
             <!-- Bottom Row -->
             <div class="grid grid-cols-2 gap-6">
-                <!-- Top Klicks/Events -->
+                <!-- Top Klicks -->
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-200">
-                        <h2 class="font-semibold text-slate-900">Top Klicks</h2>
+                        <h2 class="font-semibold text-slate-900">Top-Klicks</h2>
                     </div>
                     <?php if (empty($topEvents)): ?>
                     <div class="p-8 text-center text-slate-400">
@@ -503,7 +669,9 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
                                         'cta' => 'bg-blue-100 text-blue-700',
                                         'telefon' => 'bg-emerald-100 text-emerald-700',
                                         'email' => 'bg-amber-100 text-amber-700',
-                                        'navigation' => 'bg-slate-100 text-slate-600'
+                                        'navigation' => 'bg-slate-100 text-slate-600',
+                                        'formular' => 'bg-purple-100 text-purple-700',
+                                        'login' => 'bg-cyan-100 text-cyan-700'
                                     ];
                                     $badgeClass = $kategorieBadge[$event['event_kategorie']] ?? 'bg-slate-100 text-slate-600';
                                     ?>
@@ -533,7 +701,7 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
                     <?php else: ?>
                     <div class="p-6 space-y-4">
                         <?php
-                        $browserGesamt = array_sum(array_column($browserStats, 'besuche'));
+                        $browserGesamt = array_sum(array_column($browserStats, 'personen'));
                         $browserIcons = [
                             'Chrome' => 'logos:chrome',
                             'Firefox' => 'logos:firefox',
@@ -542,7 +710,7 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
                             'Opera' => 'logos:opera'
                         ];
                         foreach ($browserStats as $browser):
-                            $prozent = $browserGesamt > 0 ? round(($browser['besuche'] / $browserGesamt) * 100) : 0;
+                            $prozent = $browserGesamt > 0 ? round(($browser['personen'] / $browserGesamt) * 100) : 0;
                             $icon = $browserIcons[$browser['browser']] ?? 'solar:global-bold';
                         ?>
                         <div>
@@ -563,10 +731,107 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
                 </div>
             </div>
 
+            <!-- Standort-Statistiken -->
+            <div class="grid grid-cols-2 gap-6 mt-6">
+                <!-- Länder -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-200">
+                        <h2 class="font-semibold text-slate-900 flex items-center gap-2">
+                            <iconify-icon icon="solar:globe-bold" class="text-blue-500" width="20"></iconify-icon>
+                            Besucher nach Land
+                        </h2>
+                    </div>
+                    <?php if (empty($laenderStats)): ?>
+                    <div class="p-8 text-center text-slate-400">
+                        <iconify-icon icon="solar:map-point-bold" width="32" class="mb-2"></iconify-icon>
+                        <p>Noch keine Standortdaten</p>
+                        <p class="text-xs mt-1">Daten werden ab jetzt erfasst</p>
+                    </div>
+                    <?php else: ?>
+                    <div class="p-6 space-y-4">
+                        <?php
+                        $laenderGesamt = array_sum(array_column($laenderStats, 'personen'));
+                        $landFlags = [
+                            'Germany' => '🇩🇪',
+                            'Deutschland' => '🇩🇪',
+                            'Austria' => '🇦🇹',
+                            'Österreich' => '🇦🇹',
+                            'Switzerland' => '🇨🇭',
+                            'Schweiz' => '🇨🇭',
+                            'Netherlands' => '🇳🇱',
+                            'Belgium' => '🇧🇪',
+                            'France' => '🇫🇷',
+                            'United Kingdom' => '🇬🇧',
+                            'United States' => '🇺🇸',
+                            'Poland' => '🇵🇱',
+                            'Italy' => '🇮🇹',
+                            'Spain' => '🇪🇸',
+                            'Portugal' => '🇵🇹'
+                        ];
+                        foreach ($laenderStats as $land):
+                            $prozent = $laenderGesamt > 0 ? round(($land['personen'] / $laenderGesamt) * 100) : 0;
+                            $flag = $landFlags[$land['land']] ?? '🌍';
+                        ?>
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="flex items-center gap-2 text-sm text-slate-700">
+                                    <span class="text-lg"><?= $flag ?></span>
+                                    <?= e($land['land']) ?>
+                                </span>
+                                <span class="text-sm">
+                                    <span class="font-medium text-slate-900"><?= number_format($land['personen']) ?></span>
+                                    <span class="text-slate-400">(<?= $prozent ?>%)</span>
+                                </span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full transition-all" style="width: <?= $prozent ?>%"></div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Regionen (Detail) -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-200">
+                        <h2 class="font-semibold text-slate-900 flex items-center gap-2">
+                            <iconify-icon icon="solar:map-point-bold" class="text-emerald-500" width="20"></iconify-icon>
+                            Besucher nach Region
+                        </h2>
+                    </div>
+                    <?php if (empty($standortStats)): ?>
+                    <div class="p-8 text-center text-slate-400">
+                        <iconify-icon icon="solar:map-bold" width="32" class="mb-2"></iconify-icon>
+                        <p>Noch keine Standortdaten</p>
+                    </div>
+                    <?php else: ?>
+                    <table class="w-full">
+                        <thead class="bg-slate-50 text-left text-xs text-slate-500">
+                            <tr>
+                                <th class="px-6 py-3 font-medium">Land</th>
+                                <th class="px-6 py-3 font-medium">Region</th>
+                                <th class="px-6 py-3 font-medium text-right">Personen</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <?php foreach ($standortStats as $ort): ?>
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-6 py-3 text-sm text-slate-700"><?= e($ort['land']) ?></td>
+                                <td class="px-6 py-3 text-sm text-slate-500"><?= e($ort['region'] ?: '-') ?></td>
+                                <td class="px-6 py-3 text-sm text-right font-medium text-slate-900"><?= number_format($ort['personen']) ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <?php endif; ?>
+                </div>
+            </div>
+
             <!-- DSGVO Hinweis -->
             <div class="mt-8 p-4 bg-slate-50 rounded-xl border border-slate-200 text-sm text-slate-500">
                 <iconify-icon icon="solar:shield-check-bold" class="text-emerald-500 mr-2" width="18"></iconify-icon>
-                <strong>DSGVO-konform:</strong> Alle Daten werden ohne Cookies und ohne IP-Speicherung erfasst. Session-Hashes rotieren täglich. Daten werden nach 90 Tagen automatisch gelöscht.
+                <strong>DSGVO-konform:</strong> Alle Daten werden ohne Cookies und ohne IP-Speicherung erfasst. Session-Hashes rotieren täglich. Standorte werden nur als Land/Region gespeichert (keine genauen Adressen). Daten werden nach 90 Tagen automatisch gelöscht.
             </div>
         </main>
     </div>
@@ -580,8 +845,8 @@ $stats = $db->query("SELECT SUM(CASE WHEN status = 'neu' THEN 1 ELSE 0 END) as n
                 labels: <?= json_encode($chartLabels) ?>,
                 datasets: [
                     {
-                        label: 'Besucher',
-                        data: <?= json_encode($chartBesucher) ?>,
+                        label: 'Personen (unique)',
+                        data: <?= json_encode($chartPersonen) ?>,
                         borderColor: '#3b82f6',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         fill: true,

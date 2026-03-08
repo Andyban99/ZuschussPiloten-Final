@@ -13,6 +13,12 @@ $success = '';
 
 // Einstellung speichern
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    // CSRF-Token validieren
+    if (!validateCSRFToken($_POST[CSRF_TOKEN_NAME] ?? '')) {
+        logSecurityEvent('csrf_validation_failed', ['page' => 'einstellungen.php']);
+        die('Ungültige Anfrage');
+    }
+
     if ($_POST['action'] === 'toggle_kundenportal') {
         $settings['kundenportal_aktiv'] = !$settings['kundenportal_aktiv'];
         file_put_contents($settingsFile, json_encode($settings, JSON_PRETTY_PRINT));
@@ -114,6 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             </div>
                         </div>
                         <form method="POST" class="flex items-center gap-4">
+                            <?= csrfField() ?>
                             <input type="hidden" name="action" value="toggle_kundenportal">
 
                             <span class="text-sm font-medium <?= $settings['kundenportal_aktiv'] ? 'text-emerald-600' : 'text-slate-400' ?>">

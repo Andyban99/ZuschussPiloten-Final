@@ -29,6 +29,11 @@ $success = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF-Token validieren
+    if (!validateCSRFToken($_POST[CSRF_TOKEN_NAME] ?? '')) {
+        logSecurityEvent('csrf_validation_failed', ['page' => 'view.php', 'id' => $id]);
+        $error = 'Ungültige Anfrage. Bitte laden Sie die Seite neu.';
+    } else {
     $action = $_POST['action'] ?? '';
 
     try {
@@ -65,6 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (PDOException $e) {
         $error = 'Ein Fehler ist aufgetreten';
     }
+    } // Ende CSRF-Check
 }
 
 $statusColors = [
@@ -208,6 +214,7 @@ $statusLabels = [
                             Interne Notizen
                         </h2>
                         <form method="POST">
+                            <?= csrfField() ?>
                             <input type="hidden" name="action" value="update_notizen">
                             <textarea name="notizen" rows="4" placeholder="Notizen hinzufügen..."
                                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"><?= e($anfrage['notizen'] ?? '') ?></textarea>
@@ -242,6 +249,7 @@ $statusLabels = [
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                         <h2 class="font-semibold text-slate-900 mb-4">Status</h2>
                         <form method="POST" class="space-y-3">
+                            <?= csrfField() ?>
                             <input type="hidden" name="action" value="update_status">
                             <select name="status" onchange="this.form.submit()"
                                     class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
@@ -256,6 +264,7 @@ $statusLabels = [
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                         <h2 class="font-semibold text-slate-900 mb-4">Priorität</h2>
                         <form method="POST">
+                            <?= csrfField() ?>
                             <input type="hidden" name="action" value="update_prioritaet">
                             <div class="flex gap-2">
                                 <button type="submit" name="prioritaet" value="normal"
@@ -300,6 +309,7 @@ $statusLabels = [
                         <h2 class="font-semibold text-red-900 mb-2">Gefahrenzone</h2>
                         <p class="text-sm text-red-600 mb-4">Diese Aktion kann nicht rückgängig gemacht werden.</p>
                         <form method="POST" onsubmit="return confirm('Sind Sie sicher, dass Sie diese Anfrage löschen möchten?')">
+                            <?= csrfField() ?>
                             <input type="hidden" name="action" value="delete">
                             <button type="submit" class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
                                 <iconify-icon icon="solar:trash-bin-trash-bold" width="16"></iconify-icon>

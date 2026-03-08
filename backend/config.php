@@ -12,11 +12,11 @@ ini_set('display_errors', 0);
 define('DB_HOST', 'database-5019531275.webspace-host.com');
 define('DB_NAME', 'dbs15265930');
 define('DB_USER', 'dbu2285787');
-define('DB_PASS', 'Freunde999...');
+define('DB_PASS', 'JesusIsLord99.');
 
 // Admin-Zugangsdaten
 define('ADMIN_USER', 'admin');
-define('ADMIN_PASS_HASH', 'dev_mode');
+define('ADMIN_PASS_HASH', '$2y$12$LxagunsWoewecbFwijDCQO5MR0LYbD55CL.gDTflvn94n7d05v7Te');
 
 // E-Mail-Benachrichtigung
 define('NOTIFY_EMAILS', ['andrew.banoub@zuschusspiloten.de', 'team@zuschusspiloten.de']);
