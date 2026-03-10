@@ -23,20 +23,30 @@
     <meta property="og:image" content="assets/Icon Black White BG.svg">
     <meta property="og:locale" content="de_DE">
 
-    <!-- Preload Images -->
-    <link rel="preload" href="assets/andrew.jpg" as="image">
-    <link rel="preload" href="assets/Timo Erdelmeier.jpg" as="image">
+    <!-- Prefetch below-fold images (not preload - they're not critical) -->
+    <link rel="prefetch" href="assets/andrew.jpg" as="image">
+    <link rel="prefetch" href="assets/Timo Erdelmeier.jpg" as="image">
 
-    <!-- Fonts -->
+    <!-- Preconnect & Prefetch for faster loading -->
+    <link rel="dns-prefetch" href="https://app.cal.eu">
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+    <link rel="dns-prefetch" href="https://code.iconify.design">
+    <link rel="dns-prefetch" href="https://api.iconify.design">
+    <link rel="preconnect" href="https://app.cal.eu" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+    <link rel="preconnect" href="https://code.iconify.design" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="prefetch" href="https://app.cal.eu/zuschusspiloten/erstgesprach?embed=true&theme=light">
+
+    <!-- Fonts - with font-display swap already set -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS (CDN for development - consider building for production) -->
+    <!-- Tailwind CSS - loaded with high priority -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Icons -->
-    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <!-- Icons - deferred for non-blocking load -->
+    <script defer src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 
     <!-- Custom Styles -->
     <link rel="stylesheet" href="css/styles.css">
@@ -124,7 +134,7 @@
                     <iconify-icon icon="solar:user-circle-linear" width="18"></iconify-icon>
                     <span>Kundenportal</span>
                 </a>
-                <a href="terminbuchung"
+                <a href="#kalender"
                     class="group px-3 sm:px-5 py-2 sm:py-2.5 bg-[#0F172A] hover:bg-blue-900 text-white text-xs sm:text-sm font-medium rounded-lg transition-all shadow-lg shadow-blue-900/10 flex items-center gap-2">
                     <span class="hidden sm:inline">Kostenloser Zuschusscheck</span>
                     <span class="sm:hidden">Kontakt</span>
@@ -271,7 +281,7 @@
                 </p>
 
                 <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
-                    <a href="terminbuchung" class="btn-hero flex items-center justify-center gap-2 text-sm sm:text-base">
+                    <a href="#kalender" class="btn-hero flex items-center justify-center gap-2 text-sm sm:text-base">
                         <span>Kostenlose Förderanalyse</span>
                         <iconify-icon icon="solar:chart-2-bold" width="18"></iconify-icon>
                     </a>
@@ -990,7 +1000,7 @@
                         <div class="relative shrink-0">
                             <div
                                 class="w-64 h-64 md:w-80 md:h-80 rounded-3xl overflow-hidden border-4 border-white/20 shadow-2xl shadow-blue-900/50">
-                                <img src="assets/andrew.jpg" alt="Andrew Banoub" class="w-full h-full object-cover">
+                                <img src="assets/andrew.jpg" alt="Andrew Banoub" class="w-full h-full object-cover" loading="lazy">
                             </div>
                             <div
                                 class="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-600/30 whitespace-nowrap">
@@ -1053,7 +1063,7 @@
                             <div class="inline-block mb-8">
                                 <div class="bg-white rounded-2xl p-6 border border-slate-200">
                                     <img src="assets/erdelmeier-foerdermittelmanagement.svg"
-                                        alt="Erdelmeier Fördermittelmanagement" class="h-14 w-auto">
+                                        alt="Erdelmeier Fördermittelmanagement" class="h-14 w-auto" loading="lazy">
                                 </div>
                             </div>
 
@@ -1085,7 +1095,7 @@
                             <div
                                 class="w-64 h-64 md:w-80 md:h-80 rounded-3xl overflow-hidden border-4 border-white shadow-2xl">
                                 <img src="assets/Timo Erdelmeier.jpg" alt="Timo Erdelmeier"
-                                    class="w-full h-full object-cover">
+                                    class="w-full h-full object-cover" loading="lazy">
                             </div>
                             <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 text-center">
                                 <div class="bg-white px-5 py-2 rounded-xl shadow-lg border border-slate-100">
@@ -1287,7 +1297,7 @@
 
             <!-- Bottom CTA -->
             <div class="mt-16 text-center">
-                <a href="terminbuchung"
+                <a href="#kalender"
                     class="inline-flex items-center gap-3 px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-lg rounded-xl shadow-xl shadow-blue-600/25 transition-all transform hover:-translate-y-1">
                     <span>Jetzt unverbindlich anfragen</span>
                     <iconify-icon icon="solar:arrow-right-linear" width="22"></iconify-icon>
@@ -1299,10 +1309,10 @@
     <!-- ========================================
          CONTACT / BOOKING SECTION
          ======================================== -->
-    <section id="kontakt" class="py-20 bg-slate-50 relative overflow-hidden">
-        <div class="max-w-5xl mx-auto px-6 relative z-10">
-            <!-- Header -->
-            <div class="text-center mb-10">
+    <section id="kontakt" class="py-2 md:py-20 bg-slate-50 relative overflow-hidden">
+        <div class="max-w-5xl mx-auto px-2 md:px-6 relative z-10">
+            <!-- Header - hidden on mobile -->
+            <div class="hidden md:block text-center mb-10">
                 <div
                     class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 border border-blue-200 text-blue-700 text-xs font-medium mb-4">
                     <iconify-icon icon="solar:calendar-bold" width="14"></iconify-icon>
@@ -1318,8 +1328,8 @@
                 </p>
             </div>
 
-            <!-- Benefits Row -->
-            <div class="grid md:grid-cols-3 gap-4 mb-8">
+            <!-- Benefits Row - hidden on mobile for compact view -->
+            <div class="hidden md:grid md:grid-cols-3 gap-4 mb-8">
                 <div class="flex items-center gap-3 bg-white rounded-xl px-4 py-3 border border-slate-200">
                     <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
                         <iconify-icon icon="solar:check-circle-bold" width="18"></iconify-icon>
@@ -1341,7 +1351,7 @@
             </div>
 
             <!-- Calendar -->
-            <div class="relative">
+            <div id="kalender" class="relative" style="scroll-margin-top: 100px;">
                 <!-- Decorative gradient background -->
                 <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-3xl blur-sm opacity-20"></div>
 
@@ -1367,7 +1377,7 @@
                     <iframe
                         src="https://app.cal.eu/zuschusspiloten/erstgesprach?embed=true&theme=light"
                         style="width: 100%; height: 600px; border: none;"
-                        loading="lazy">
+                        loading="eager">
                     </iframe>
                 </div>
             </div>
@@ -1395,7 +1405,7 @@
                         planbar und einfach.
                     </p>
                     <div class="flex items-center gap-4">
-                        <a href="terminbuchung"
+                        <a href="#kalender"
                             class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors">
                             Kontakt aufnehmen
                         </a>
@@ -1441,7 +1451,7 @@
                         </li>
                         <li><a href="#ueber-uns" class="hover:text-blue-400 transition-colors">Über uns</a></li>
                         <li><a href="#warum-wir" class="hover:text-blue-400 transition-colors">Was uns ausmacht</a></li>
-                        <li><a href="terminbuchung" class="hover:text-blue-400 transition-colors">Kontakt</a></li>
+                        <li><a href="#kalender" class="hover:text-blue-400 transition-colors">Kontakt</a></li>
                     </ul>
                 </div>
 
@@ -1503,6 +1513,19 @@
 
     <!-- Tracking (DSGVO-konform, cookielos) -->
     <script src="/js/tracker.js" defer></script>
+
+    <!-- Smooth Scroll to Calendar -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const kalender = document.getElementById('kalender');
+            document.querySelectorAll('a[href="#kalender"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (kalender) kalender.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

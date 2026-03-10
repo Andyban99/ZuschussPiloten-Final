@@ -23,16 +23,26 @@
     <meta property="og:image" content="assets/Icon Black White BG.svg">
     <meta property="og:locale" content="de_DE">
 
-    <!-- Fonts -->
+    <!-- Preconnect & Prefetch for faster loading -->
+    <link rel="dns-prefetch" href="https://app.cal.eu">
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+    <link rel="dns-prefetch" href="https://code.iconify.design">
+    <link rel="dns-prefetch" href="https://api.iconify.design">
+    <link rel="preconnect" href="https://app.cal.eu" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+    <link rel="preconnect" href="https://code.iconify.design" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="prefetch" href="https://app.cal.eu/zuschusspiloten/erstgesprach?embed=true&theme=light">
+
+    <!-- Fonts - with font-display swap already set -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS - loaded with high priority -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Icons -->
-    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <!-- Icons - deferred for non-blocking load -->
+    <script defer src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 
     <!-- Custom Styles -->
     <link rel="stylesheet" href="css/styles.css">
@@ -200,15 +210,15 @@
     <!-- ========================================
          HERO / BOOKING SECTION
          ======================================== -->
-    <section class="pt-32 pb-24 bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 relative overflow-hidden min-h-screen">
+    <section class="pt-16 md:pt-32 pb-2 md:pb-24 bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 relative overflow-hidden min-h-screen">
         <!-- Background Decoration -->
         <div class="absolute top-0 right-0 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-30 translate-x-1/2 -translate-y-1/2"></div>
         <div class="absolute bottom-0 left-0 w-64 h-64 bg-indigo-100 rounded-full blur-3xl opacity-30 -translate-x-1/2 translate-y-1/2"></div>
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-blue-100/20 to-indigo-100/20 rounded-full blur-3xl"></div>
 
-        <div class="max-w-5xl mx-auto px-6 relative z-10">
-            <!-- Header -->
-            <div class="text-center mb-10">
+        <div class="max-w-5xl mx-auto px-2 md:px-6 relative z-10">
+            <!-- Header - hidden on mobile -->
+            <div class="hidden md:block text-center mb-10">
                 <div
                     class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 border border-blue-200 text-blue-700 text-xs font-medium mb-4">
                     <iconify-icon icon="solar:calendar-bold" width="14"></iconify-icon>
@@ -224,8 +234,8 @@
                 </p>
             </div>
 
-            <!-- Benefits Row -->
-            <div class="grid md:grid-cols-3 gap-4 mb-8">
+            <!-- Benefits Row - hidden on mobile for compact view -->
+            <div class="hidden md:grid md:grid-cols-3 gap-4 mb-8">
                 <div class="flex items-center gap-3 bg-white rounded-xl px-4 py-3 border border-slate-200 shadow-sm">
                     <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
                         <iconify-icon icon="solar:check-circle-bold" width="18"></iconify-icon>
@@ -273,7 +283,7 @@
                     <iframe
                         src="https://app.cal.eu/zuschusspiloten/erstgesprach?embed=true&theme=light"
                         style="width: 100%; height: 600px; border: none;"
-                        loading="lazy">
+                        loading="eager">
                     </iframe>
                 </div>
             </div>
