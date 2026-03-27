@@ -81,6 +81,23 @@ body {
     animation: float 6s ease-in-out infinite;
 }
 
+/* Slower floating animation for decorative elements */
+@keyframes float-slow {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    33% {
+        transform: translateY(-15px) rotate(3deg);
+    }
+    66% {
+        transform: translateY(8px) rotate(-2deg);
+    }
+}
+
+.animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+}
+
 /* --------------------------------------------------------------------------
    Hero Background Animation
    -------------------------------------------------------------------------- */
