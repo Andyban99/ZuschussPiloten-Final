@@ -3,3 +3,10 @@
 
 # Original backup images (large files)
 *_original.*
+
+# Credentials (never commit)
+.claude/credentials.env
+
+# Node
+node_modules/
+package-lock.json
