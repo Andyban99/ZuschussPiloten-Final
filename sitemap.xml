@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <!-- Hauptseite -->
+    <url>
+        <loc>https://zuschusspiloten.de/</loc>
+        <lastmod>2025-03-23</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- Leistungsseiten -->
+    <url>
+        <loc>https://zuschusspiloten.de/investitionsfoerderung.html</loc>
+        <lastmod>2025-03-23</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://zuschusspiloten.de/personalfoerderung.html</loc>
+        <lastmod>2025-03-23</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://zuschusspiloten.de/beg-foerderung.html</loc>
+        <lastmod>2026-03-26</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://zuschusspiloten.de/forschungszulage.html</loc>
+        <lastmod>2026-03-26</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://zuschusspiloten.de/grw.html</loc>
+        <lastmod>2025-03-23</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Kontakt/Buchung -->
+    <url>
+        <loc>https://zuschusspiloten.de/terminbuchung.html</loc>
+        <lastmod>2025-03-23</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://zuschusspiloten.de/zuschusscheck.html</loc>
+        <lastmod>2025-03-23</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Rechtliche Seiten -->
+    <url>
+        <loc>https://zuschusspiloten.de/impressum.html</loc>
+        <lastmod>2025-03-23</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+    <url>
+        <loc>https://zuschusspiloten.de/datenschutz.html</loc>
+        <lastmod>2025-03-23</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+    <url>
+        <loc>https://zuschusspiloten.de/agb.html</loc>
+        <lastmod>2025-03-23</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+</urlset>

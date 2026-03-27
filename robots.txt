@@ -1,0 +1,20 @@
+# Robots.txt für Zuschuss Piloten
+# https://zuschusspiloten.de
+
+User-agent: *
+Allow: /
+
+# Wichtige Seiten
+Allow: /index.html
+Allow: /investitionsfoerderung.html
+Allow: /digitalisierung.html
+Allow: /personalfoerderung.html
+Allow: /grw.html
+Allow: /terminbuchung.html
+
+# Backend und private Bereiche ausschließen
+Disallow: /backend/
+Disallow: /Beispielseiten/
+
+# Sitemap
+Sitemap: https://zuschusspiloten.de/sitemap.xml
