@@ -21,6 +21,14 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 # CLEAN URLs (ohne .html)
 # ================================================
 
+# Redirect .html URLs to clean URLs (except index.html)
+RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
+RewriteCond %{REQUEST_FILENAME} !praesentation\.html [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# Redirect /index to /
+RewriteRule ^index$ / [R=301,L]
+
 # Serve .html file for clean URL (no redirect, just internal rewrite)
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f

@@ -9,12 +9,17 @@ Allow: /index.html
 Allow: /investitionsfoerderung.html
 Allow: /digitalisierung.html
 Allow: /personalfoerderung.html
+Allow: /forschungszulage.html
+Allow: /beg-foerderung.html
 Allow: /grw.html
 Allow: /terminbuchung.html
+Allow: /zuschusscheck.html
 
 # Backend und private Bereiche ausschließen
 Disallow: /backend/
 Disallow: /Beispielseiten/
+Disallow: /praesentation.html
+Disallow: /node_modules/
 
 # Sitemap
 Sitemap: https://zuschusspiloten.de/sitemap.xml
