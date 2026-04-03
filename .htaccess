@@ -18,6 +18,13 @@ RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # ================================================
+# LOGO REDIRECT
+# ================================================
+
+# Redirect /logo to the logo image
+RewriteRule ^logo$ /assets/Zuschuss%20Piloten%20Logo%202.png [L,R=301]
+
+# ================================================
 # CLEAN URLs (ohne .html)
 # ================================================
 
